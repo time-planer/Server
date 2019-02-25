@@ -1,0 +1,2777 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: nilsbrugger.nb.nb.nb@gmail.com
+    name: Nils
+  description: The time planer API
+  license:
+    name: Apache 2.0
+  title: Time Planer
+  version: 2.2.1-alpha
+servers:
+- url: http://eds.logfro.de/time-planer
+- url: http://localhost:8080/time-planer
+tags:
+- description: All Actions for Groups where you are a Member
+  name: MemberingGroups
+- description: Handling with Groups where you are the ADMIN
+  name: MyGroups
+- description: |-
+    # Groups
+    Users can create Groups, for example a class.
+
+    In this group there are **members**  and an **creator**
+
+    People with the right permission are allowed to create deadlines.
+
+    All people can view all deadlines from the group but only a few with the permissions are allowed to edit.
+  name: Grouping
+- description: |-
+    Hande with the users Tasks
+    * Adding
+    * Removing
+    * Editing
+  name: Tasking
+- description: |-
+    # Service
+    We use an API key to authenticate. If you like to access a user service or data you need to get his API Key.
+    Every User has his own API key which you can get via login.
+    # Flow
+    ## Registration
+    ```
+    Client                Server
+      |     Registration     |
+      |--------------------> |
+      |    Status OK 200     |
+      |<-------------------- |
+    ```
+    ## Login
+    ```
+    Client                Server
+      |     Credentials      |
+      |--------------------> |
+      |      API_KEY         |
+      |<-------------------- |
+    ```
+    ## Usage
+    ```
+    Client                                             Server
+      |    Request Resource(header user_key="apikey")     |
+      |-------------------------------------------------> |
+      |               Resource Response                   |
+      |<------------------------------------------------- |
+    ```
+  name: Authentication
+paths:
+  /auth:
+    get:
+      description: Here you authenticate as the user and get his API key
+      operationId: login
+      parameters:
+      - description: The Email Adress of the User
+        explode: true
+        in: query
+        name: email
+        required: true
+        schema:
+          format: email
+          type: string
+        style: form
+      - description: The Uses password
+        explode: true
+        in: query
+        name: password
+        required: true
+        schema:
+          format: password
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: login successfull
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: no password
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The request does not contains a passwort for the user
+        204:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: No email address
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: params not matching pattern
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            Some of the parameters did not matched the pattern they should.
+            For example an email adress needs to match the pattern
+            `{some chars}@{provider}.{top level domain}`
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: wrong password
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: wrong password
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      summary: Login
+      tags:
+      - Authentication
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
+    put:
+      description: |-
+        Registers a new user.
+        ### Requirements
+        * Name
+        * Email
+        * Password
+      operationId: registrate
+      requestBody:
+        $ref: '#/components/requestBodies/RegistrationRequest'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: regisration worked
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: params not matching pattern
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            Some of the parameters did not matched the pattern they should.
+            For example an email adress needs to match the pattern
+            `{some chars}@{provider}.{top level domain}`
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Params missing
+        409:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: User allready exists
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: User allready exists
+      summary: Registration
+      tags:
+      - Authentication
+      x-accepts: application/json
+      x-tags:
+      - tag: Authentication
+      x-contentType: application/json
+  /user/{username}/tasks:
+    delete:
+      description: Deletes all Tasks
+      operationId: removeAllTasks
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: all tasks deleted
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: all tasks deleted
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Remove All Tasks
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+    get:
+      description: Fetch the users tasks
+      operationId: getAllTasks
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                  - name: do
+                    deadline: 1944-12-07T00:00:00.000Z
+                    planedDate: 2010-08-11T00:00:00.000Z
+                    description: minim sunt in do culpa
+                    importance: 0
+                    entererAt: 1988-10-06T00:00:00.000Z
+                    process: 79
+                  - name: Ut in oc
+                    deadline: 1953-02-02T00:00:00.000Z
+                    planedDate: 1952-11-30T00:00:00.000Z
+                    description: tempor ex in
+                    importance: 3
+                    entererAt: 1978-04-24T00:00:00.000Z
+                    process: 74
+                  - name: non ni
+                    deadline: 1944-08-03T00:00:00.000Z
+                    planedDate: 1962-04-18T00:00:00.000Z
+                    description: quis voluptate sed anim
+                    importance: 5
+                    entererAt: 1954-12-24T00:00:00.000Z
+                    process: 8
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: All Tasks of the user in an list
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Get All Tasks
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+    post:
+      description: Adds a task to the users storage
+      operationId: addTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/InitialTask'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: |-
+            task added.
+            The whole created Task in response
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Add Task
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+      x-contentType: application/json
+  /user/{username}/task/{task}:
+    delete:
+      description: Deletes the task
+      operationId: deleteTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 8
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: data delivered
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+    get:
+      description: get detailed information about the task
+      operationId: getTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 8
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: data delivered
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+    patch:
+      description: Edit the Task
+      operationId: editTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/EditTask'
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 8
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: |-
+            EDITED.
+            The edited task
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - tag: Tasking
+      x-contentType: application/json
+  /user/{username}/group/{group_UUID}/tasks:
+    delete:
+      description: Deletes all Tasks
+      operationId: removeAllGroupTasks
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: all tasks deleted
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: all tasks deleted
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: no permission
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The user doesn't has the permission to perform this acction
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Remove All Group Tasks
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+    get:
+      description: Fetch the users tasks
+      operationId: getAllGroupTasks
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                  - name: do
+                    deadline: 1944-12-07T00:00:00.000Z
+                    planedDate: 2010-08-11T00:00:00.000Z
+                    description: minim sunt in do culpa
+                    importance: 0
+                    entererAt: 1988-10-06T00:00:00.000Z
+                    process: 79
+                  - name: Ut in oc
+                    deadline: 1953-02-02T00:00:00.000Z
+                    planedDate: 1952-11-30T00:00:00.000Z
+                    description: tempor ex in
+                    importance: 3
+                    entererAt: 1978-04-24T00:00:00.000Z
+                    process: 74
+                  - name: non ni
+                    deadline: 1944-08-03T00:00:00.000Z
+                    planedDate: 1962-04-18T00:00:00.000Z
+                    description: quis voluptate sed anim
+                    importance: 5
+                    entererAt: 1954-12-24T00:00:00.000Z
+                    process: 8
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: All Tasks of the user in an list
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Get All Group Tasks
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+    post:
+      description: Adds a task to the users storage
+      operationId: addGroupTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/InitialTask'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: |-
+            task added.
+            The whole created Task in response
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: no permission
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The user doesn't has the permission to perform this acction
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Add Group Task
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+      x-contentType: application/json
+  /user/{username}/group/{group_UUID}/task/{task}:
+    delete:
+      description: Deletes the task
+      operationId: deleteGroupTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 32
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: data delivered
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: no permission
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The user doesn't has the permission to perform this acction
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Delete Group Task
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+    get:
+      description: get detailed information about the task
+      operationId: getGroupTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 8
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: data delivered
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Get Group Task Information
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+    patch:
+      description: Edit the Task
+      operationId: editGroupTask
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The name of the task to edit delte or get detailed information
+        explode: false
+        in: path
+        name: task
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 1
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/EditTask'
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: esse con
+                    deadline: 1984-07-28T00:00:00.000Z
+                    planedDate: 1991-01-19T00:00:00.000Z
+                    description: deserunt
+                    importance: 8
+                    entererAt: 2009-06-28T00:00:00.000Z
+                    process: 8
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: |-
+            EDITED.
+            Respondes the edited task
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: task not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The Rask you need is not avainable, mabye you create it first?
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: no permission
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The user doesn't has the permission to perform this acction
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Edit Group Task
+      tags:
+      - Tasking
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Tasking
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+      x-contentType: application/json
+  /user/{username}/mygroups/:
+    get:
+      description: Here you can get all groups which the user owns
+      operationId: getOwnedGroups
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                  - name: voluptate
+                    description: labo
+                    members: 20
+                    creation_date: 2018-03-27T00:00:00.000Z
+                    tasks: 20046389
+                    uid: eVJluBrbUD
+                  - name: aute ut
+                    description: aliqua cu
+                    members: 15
+                    creation_date: 2018-03-31T00:00:00.000Z
+                    tasks: -33328415
+                    uid: PvjFKaSloJ
+                  - name: ut adipis
+                    description: in ad
+                    members: 2
+                    creation_date: 2018-06-15T00:00:00.000Z
+                    tasks: -64953313
+                    uid: IB1RTvSWOq
+              schema:
+                items:
+                  $ref: '#/components/schemas/ReducedGroup'
+                type: array
+          description: The List of all Groups(reduced version) the user created
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Get all created groups
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MyGroups
+    post:
+      description: Here you can create an group
+      operationId: createGroup
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitialGroup'
+        x-examples:
+          application/json:
+            descr: 1 B Klasse der IT des TGMs
+            name: 1BHIT
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: nisi aliq
+                    description: labore
+                    members:
+                    - email: bXfC0wCZ@lQOdBtLNNnAHXszqiv.zuk
+                      edit: true
+                      create: true
+                      delete: true
+                    - email: 8KUnmm4ddOQx-dk@oLmnLUlvUiDKsPaNEKkppT.ef
+                      edit: true
+                      create: true
+                      delete: true
+                    - email: 8xY9doc7NIOlj@nsTBCaeRbzyifbkp.ljn
+                      edit: false
+                      create: false
+                      delete: true
+                    - email: zONMSuT8e@fPQFIxsqZnWH.mqh
+                      edit: true
+                      create: false
+                      delete: true
+                    - email: fBIo15o2@MWgCYeCPMVvoSqwH.gbuv
+                      edit: false
+                      create: false
+                      delete: true
+                    creation_date: 1940-05-05T00:00:00.000Z
+                    tasks:
+                    - laboris mollit tempor cupidatat
+                    - esse in
+                    - dolor cupidatat sint deserunt cillum
+                    - in do est eiusmod dolore
+                    - eiusmod sunt fugiat
+                    creator: ONDC2@bNvcKOGlvDlBpfqTpehlatAoCokiPll.rv
+                    uid: qVNCy9Dv1hBF2hgfgj238gkj5jkg65
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: |-
+            Group created.
+            Returned the created Group
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Create a group
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MyGroups
+      x-contentType: application/json
+  /user/{username}/mygroup/{group_UUID}:
+    delete:
+      description: Deletes the group, as all tasks within
+      operationId: deleteGroup
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: |-
+            Group successfull removed.
+            In response the removed group
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not owned
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: You tryed to do someting with a group you dont own!
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: group_not_found
+      security:
+      - User_Key: []
+      summary: Remove Group
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MyGroups
+    get:
+      description: Get detailed information about a group
+      operationId: getOwnedGroup
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: commo
+                    description: ei
+                    members:
+                    - email: fgqLoaro@mo.ub
+                      edit: true
+                      create: false
+                      delete: true
+                    - email: fOw1H@VynIJdkJgAWihnlsVwbltPURTja.xr
+                      edit: true
+                      create: true
+                      delete: true
+                    - email: TIEpnc-4@cePagFYicdyYX.co
+                      edit: false
+                      create: false
+                      delete: false
+                    creation_date: 1966-04-05T00:00:00.000Z
+                    tasks:
+                    - ipsum tempor
+                    - do
+                    - magna
+                    - non qui ad do officia
+                    creator: zAQbuIqqZhWLN@JBSqByyWInaFQBdjgMSSuIuinD.ki
+                    uid: GaBCJetycE
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The complete group in response
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not owned
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: You tryed to do someting with a group you dont own!
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: group_not_found
+      security:
+      - User_Key: []
+      summary: Get detailed information
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MyGroups
+    patch:
+      description: Edit some values of a Group.
+      operationId: editGroup
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditGroup'
+        description: |-
+          The edit information
+
+          You also can only edit a few values or none, all parameters are optional
+        x-examples:
+          application/json:
+            name: nulla do
+            description: deserun
+            members:
+            - email: hXf@student.tgm.ac.at
+              edit: false
+              create: true
+              delete: false
+            - email: Swdadwa@lenOCMXSzLuFgdTCVaIF.com
+              edit: true
+              create: false
+              delete: true
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: nulla do
+                    description: deserun
+                    members:
+                    - email: hXf@student.tgm.ac.at
+                      edit: false
+                      create: true
+                      delete: false
+                    - email: Swdadwa@lenOCMXSzLuFgdTCVaIF.com
+                      edit: true
+                      create: false
+                      delete: true
+                    creation_date: 2010-07-12T00:00:00.000Z
+                    tasks:
+                    - sed officia quis nulla consectetur
+                    - nulla amet
+                    - nisi conse
+                    creator: 9yZX@CTsKHIncDe.zk
+                    uid: 6Lx0NUCIUV
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: |-
+            Editing worked.
+
+            The edited Group in response
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        403:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not owned
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: You tryed to do someting with a group you dont own!
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: group_not_found
+      security:
+      - User_Key: []
+      summary: Edit Group
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MyGroups
+      x-contentType: application/json
+  /user/{username}/groups/:
+    get:
+      description: Here you can get all groups where you are a member
+      operationId: getGroups
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                  - name: voluptate
+                    description: labo
+                    members: 20
+                    creation_date: 2018-03-27T00:00:00.000Z
+                    tasks: 20046389
+                    uid: eVJluBrbUD
+                  - name: aute ut
+                    description: aliqua cu
+                    members: 15
+                    creation_date: 2018-03-31T00:00:00.000Z
+                    tasks: -33328415
+                    uid: PvjFKaSloJ
+                  - name: ut adipis
+                    description: in ad
+                    members: 2
+                    creation_date: 2018-06-15T00:00:00.000Z
+                    tasks: -64953313
+                    uid: IB1RTvSWOq
+              schema:
+                items:
+                  $ref: '#/components/schemas/ReducedGroup'
+                type: array
+          description: The List of all Groups(reduced version) the user created
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+      security:
+      - User_Key: []
+      summary: Get all membered groups
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+  /user/{username}/group/{group_UUID}:
+    get:
+      description: Get information about a group
+      operationId: getGroup
+      parameters:
+      - description: The users name
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          maxLength: 20
+          minLength: 3
+          type: string
+        style: simple
+      - description: The UUID of the group to operate with
+        explode: false
+        in: path
+        name: group_UUID
+        required: true
+        schema:
+          maxLength: 30
+          minLength: 30
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    name: commo
+                    description: ei
+                    members:
+                    - email: fgqLoaro@mo.ub
+                      edit: true
+                      create: false
+                      delete: true
+                    - email: fOw1H@VynIJdkJgAWihnlsVwbltPURTja.xr
+                      edit: true
+                      create: true
+                      delete: true
+                    - email: TIEpnc-4@cePagFYicdyYX.co
+                      edit: false
+                      create: false
+                      delete: false
+                    creation_date: 1966-04-05T00:00:00.000Z
+                    tasks:
+                    - ipsum tempor
+                    - do
+                    - magna
+                    - non qui ad do officia
+                    creator: zAQbuIqqZhWLN@JBSqByyWInaFQBdjgMSSuIuinD.ki
+                    uid: GaBCJetycE
+              schema:
+                $ref: '#/components/schemas/ReducedGroup'
+          description: The complete group in response
+        203:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: user not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: There is no user with such an email address. Maybe he deleted his account
+        400:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key missing
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            There is no API key in the header.
+            Look into the Autentication User Key to get aknowledge how it works
+        401:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: api key wrong
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: |-
+            API key is wrong, get a new one.
+            Maybe it expired
+        404:
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    message: group not found
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: group_not_found
+      security:
+      - User_Key: []
+      summary: Get Group Task informations
+      tags:
+      - Grouping
+      x-accepts: application/json
+      x-tags:
+      - hasMore: "true"
+        tag: Grouping
+      - tag: MemberingGroups
+components:
+  parameters:
+    username:
+      description: The users name
+      explode: false
+      in: path
+      name: username
+      required: true
+      schema:
+        maxLength: 20
+        minLength: 3
+        type: string
+      style: simple
+    TaskName:
+      description: The name of the task to edit delte or get detailed information
+      explode: false
+      in: path
+      name: task
+      required: true
+      schema:
+        maxLength: 50
+        minLength: 1
+        type: string
+      style: simple
+    group_UUID:
+      description: The UUID of the group to operate with
+      explode: false
+      in: path
+      name: group_UUID
+      required: true
+      schema:
+        maxLength: 30
+        minLength: 30
+        type: string
+      style: simple
+  requestBodies:
+    InitialTask:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InitialTask'
+      x-examples:
+        application/json:
+          name: L
+          deadline: 1988-03-20T00:00:00.000Z
+          planedDate: 1974-09-03T00:00:00.000Z
+          description: pariatur
+          importance: 4
+    RegistrationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RegistrationRequest'
+    EditTask:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EditTask'
+      description: Only need to enter the values to edit
+      x-examples:
+        application/json:
+          deadline: 1966-06-25T00:00:00.000Z
+          planedDate: 2009-07-03T00:00:00.000Z
+          description: qui eu
+          importance: 10
+  responses:
+    api_key_missing:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: api key missing
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        There is no API key in the header.
+        Look into the Autentication User Key to get aknowledge how it works
+    api_key_wrong:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: api key wrong
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        API key is wrong, get a new one.
+        Maybe it expired
+    user_not_found:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: user not found
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: There is no user with such an email address. Maybe he deleted his account
+    group_not_found:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: group not found
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: group_not_found
+    group_not_owned:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: group not owned
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: You tryed to do someting with a group you dont own!
+    no_permission:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: no permission
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: The user doesn't has the permission to perform this acction
+    no_password:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: no password
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: The request does not contains a passwort for the user
+    params_not_matching_pattern:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: params not matching pattern
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: |-
+        Some of the parameters did not matched the pattern they should.
+        For example an email adress needs to match the pattern
+        `{some chars}@{provider}.{top level domain}`
+    task_not_found:
+      content:
+        application/json:
+          examples:
+            response:
+              value:
+                message: task not found
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+      description: The Rask you need is not avainable, mabye you create it first?
+  schemas:
+    Task:
+      additionalProperties: false
+      description: A task is a thing you need to do till a certain point.
+      example:
+        process: 8
+        importance: 4
+        name: name
+        description: description
+        entererAt: 2000-01-23
+        deadline: 2000-01-23
+        planedDate: 2000-01-23
+      properties:
+        name:
+          description: |-
+            The name of the Task.
+            needs to be uniqe
+          maxLength: 50
+          minLength: 1
+          type: string
+        deadline:
+          description: The last date where it is totaly needs to be done.
+          format: date
+          type: string
+        planedDate:
+          description: The date at which you planed to be done with the task
+          format: date
+          pattern: yyyy-mm-dd
+          type: string
+        description:
+          description: The description of the task
+          type: string
+        importance:
+          description: |-
+            A google playstore like rating.
+            it is from zero to ten. Each point describing a half star.
+            10 is the best as it is 5 Stars
+          example: 4
+          format: int32
+          maximum: 10
+          minimum: 0
+          multipleOf: 1
+          type: integer
+        entererAt:
+          description: The date the taks was created
+          format: date
+          pattern: yyyy-mm-dd
+          type: string
+        process:
+          description: How far the task is done in percent
+          format: int32
+          maximum: 100
+          minimum: 0
+          type: integer
+      required:
+      - deadline
+      - description
+      - entererAt
+      - importance
+      - name
+      - planedDate
+      - process
+      type: object
+    password:
+      description: |-
+        # Password
+          * Min length: 8
+          * Max Length : 40
+          * At least one small capitalized char
+          * One upper case char
+          * pattern : (?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!§$%&\/()\\=?}\]\[{\.]+
+      format: password
+      maxLength: 40
+      minLength: 8
+      pattern: (?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!§$%&\/()\\=?}\]\[{\.]+
+      title: Password
+      type: string
+    RegistrationRequest:
+      additionalProperties: false
+      description: |-
+        ### Requirements
+        * Name
+        * Email
+        * Password
+      example:
+        password: password
+        name: name
+        email: nbrugger@studnet.tgm.ac.at
+      properties:
+        name:
+          description: |-
+            The name of an user.
+
+            unique
+          maxLength: 20
+          minLength: 3
+          type: string
+        email:
+          example: nbrugger@studnet.tgm.ac.at
+          format: email
+          type: string
+        password:
+          description: |-
+            # Password
+              * Min length: 8
+              * Max Length : 40
+              * At least one small capitalized char
+              * One upper case char
+              * pattern : ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,40}$
+          format: password
+          maxLength: 40
+          minLength: 8
+          pattern: ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,40}$
+          title: Password
+          type: string
+      required:
+      - email
+      - name
+      - password
+      type: object
+    Username:
+      description: |-
+        The name of an user.
+
+        unique
+      maxLength: 20
+      minLength: 3
+      type: string
+    LoginRequest:
+      additionalProperties: false
+      description: |-
+        The Credentials of the  user
+        * Password
+        * Email
+      properties:
+        email:
+          format: email
+          type: string
+        password:
+          description: |-
+            # Password
+              * Min length: 8
+              * Max Length : 40
+              * At least one small capitalized char
+              * One upper case char
+              * pattern : ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,40}$
+          format: password
+          maxLength: 40
+          minLength: 8
+          pattern: ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,40}$
+          title: Password
+          type: string
+      required:
+      - email
+      - password
+      title: Credentials
+      type: object
+    ApiKey:
+      description: |-
+        Every user has an uniqe API key.
+        Whith this Key you can access all datas and actions
+      format: password
+      maxLength: 1000
+      minLength: 500
+      pattern: ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{500,1000}$
+      type: string
+    InitialTask:
+      additionalProperties: false
+      description: A reduced task for adding
+      example:
+        importance: 4
+        name: name
+        description: description
+        deadline: 2000-01-23
+        planedDate: 2000-01-23
+      properties:
+        name:
+          description: |-
+            The name of the Task.
+            needs to be uniqe
+          maxLength: 50
+          minLength: 1
+          type: string
+        deadline:
+          description: The last date where it is totaly needs to be done.
+          format: date
+          type: string
+        planedDate:
+          description: The date at which you planed to be done with the task
+          format: date
+          type: string
+        description:
+          description: The description of the task
+          type: string
+        importance:
+          description: |-
+            A google playstore like rating.
+            it is from zero to ten. Each point describing a half star.
+            10 is the best as it is 5 Stars
+          example: 4
+          format: int32
+          maximum: 10
+          minimum: 0
+          multipleOf: 1
+          type: integer
+      required:
+      - deadline
+      - description
+      - importance
+      - name
+      - planedDate
+      type: object
+    EditTask:
+      additionalProperties: false
+      description: A reduced task for editing
+      example:
+        importance: 4
+        description: description
+        deadline: 2000-01-23
+        planedDate: 2000-01-23
+      properties:
+        deadline:
+          description: The last date where it is totaly needs to be done.
+          format: date
+          pattern: yyyy-mm-dd
+          type: string
+        planedDate:
+          description: The date at which you planed to be done with the task
+          format: date
+          type: string
+        description:
+          description: The description of the task
+          type: string
+        importance:
+          description: |-
+            A google playstore like rating.
+            it is from zero to ten. Each point describing a half star.
+            10 is the best as it is 5 Stars
+          example: 4
+          format: int32
+          maximum: 10
+          minimum: 0
+          multipleOf: 1
+          type: integer
+      type: object
+    InitialGroup:
+      description: |-
+        The Data Type to create an Group.
+
+        It is the reduced form of an Group as it only contains the values needed for initialisation.
+      example:
+        name: 1BHIT
+        description: description
+      properties:
+        description:
+          description: A Description of the Group what it is for
+          maxLength: 2500
+          minLength: 0
+          type: string
+        name:
+          description: |-
+            The name of the task.
+
+            **NOT** unique
+          example: 1BHIT
+          maxLength: 100
+          minLength: 2
+          type: string
+      required:
+      - description
+      - name
+      type: object
+    Group:
+      description: All information about the group
+      example:
+        uid: uid
+        creator: creator
+        members:
+        - edit: true
+          create: true
+          delete: true
+          email: email
+        - edit: true
+          create: true
+          delete: true
+          email: email
+        name: 1BHIT
+        description: description
+        creation_date: 2000-01-23
+        tasks:
+        - tasks
+        - tasks
+      properties:
+        name:
+          description: The name of the group, must **NOT** be unique
+          example: 1BHIT
+          maxLength: 100
+          minLength: 3
+          type: string
+        description:
+          description: A short description of the Group visible for all members
+          maxLength: 2500
+          minLength: 0
+          type: string
+        members:
+          description: The List of members in the Group
+          items:
+            $ref: '#/components/schemas/GroupMember'
+          type: array
+          uniqueItems: false
+        creation_date:
+          description: The date when the group was created
+          format: date
+          type: string
+        tasks:
+          description: The list of all tasks within the Group
+          items:
+            type: string
+          type: array
+        creator:
+          description: The email of the creator of the group
+          format: email
+          type: string
+        uid:
+          description: An identifyer for the Group as multiple groups with the same name can exist
+          maxLength: 30
+          minLength: 30
+          pattern: '[A-Z0-9a-z]{30}'
+          type: string
+      required:
+      - creation_date
+      - creator
+      - description
+      - members
+      - name
+      - tasks
+      - uid
+      type: object
+    EditGroup:
+      description: An edited version of a group
+      example:
+        members:
+        - edit: true
+          create: true
+          delete: true
+          email: email
+        - edit: true
+          create: true
+          delete: true
+          email: email
+        name: 1BHIT
+        description: description
+      properties:
+        name:
+          description: The name of the group, must **NOT** be unique
+          example: 1BHIT
+          maxLength: 100
+          minLength: 3
+          type: string
+        description:
+          description: A short description of the Group visible for all members
+          maxLength: 2500
+          minLength: 0
+          type: string
+        members:
+          description: The List of members in the Group
+          items:
+            $ref: '#/components/schemas/GroupMember'
+          type: array
+          uniqueItems: false
+      type: object
+    ReducedGroup:
+      description: A Group only containing the complete neccessary information
+      example:
+        uid: uid
+        members: 0
+        name: 1BHIT
+        description: description
+        creation_date: 2000-01-23
+        tasks: 5
+      properties:
+        name:
+          description: The name of the group, must **NOT** be unique
+          example: 1BHIT
+          maxLength: 100
+          minLength: 3
+          type: string
+        description:
+          description: A short description of the Group visible for all members
+          maxLength: 2500
+          minLength: 0
+          type: string
+        members:
+          description: The number of members in the Group
+          format: int32
+          minimum: 0
+          type: integer
+        creation_date:
+          description: The date when the group was created
+          format: date
+          type: string
+        tasks:
+          description: The number of all tasks within the Group
+          example: 5
+          format: int32
+          type: integer
+        uid:
+          description: An identifyer for the Group as multiple groups with the same name can exist
+          maxLength: 30
+          minLength: 30
+          pattern: '[A-Za-z0-9]{30}'
+          type: string
+      required:
+      - creation_date
+      - description
+      - members
+      - name
+      - tasks
+      - uid
+      type: object
+    GroupMember:
+      additionalProperties: false
+      description: The Member of a group defined by his name and permissions
+      example:
+        edit: true
+        create: true
+        delete: true
+        email: email
+      properties:
+        email:
+          description: The email of the user
+          format: email
+          type: string
+        edit:
+          description: Is the user permitted to edit tasks within the group
+          type: boolean
+        create:
+          description: is the user permitted to create tasks within the Group
+          type: boolean
+        delete:
+          description: is the User permitted to delte tasks within the group
+          type: boolean
+      required:
+      - create
+      - delete
+      - edit
+      - email
+      title: Member
+      type: object
+    ErrorResponse:
+      description: Detailed information about an Error
+      properties:
+        message:
+          description: A short description only a few words, what went wrong
+          enum:
+          - api key missing
+          - api key wrong
+          - group not found
+          - group not owned
+          - no password
+          - no permission
+          - user not found
+          - params not matching pattern
+          - No email address
+          - wrong password
+          - User allready exists
+          - task_not_found
+          type: string
+      required:
+      - message
+      type: object
+    SuccessResponse:
+      description: The Request was successfull handled
+      example:
+        message: registration worked
+      properties:
+        message:
+          description: A short mesage what went good
+          enum:
+          - registration worked
+          - all tasks deleted
+          type: string
+      required:
+      - message
+      type: object
+    inline_response_200:
+      example:
+        user_key: user_key
+      properties:
+        user_key:
+          description: |-
+            Every user has an uniqe API key.
+            Whith this Key you can access all datas and actions
+          format: password
+          maxLength: 1000
+          minLength: 500
+          pattern: ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{500,1000}$
+          type: string
+  securitySchemes:
+    User_Key:
+      in: header
+      name: user_key
+      type: apiKey
