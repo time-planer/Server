@@ -39,14 +39,14 @@ public class DBTest {
 	                                    
 	                                     db.groups().create(new InitialGroup().name("Task 2").description("AA radoom"));
 		ArrayList<ReducedGroup> mygrps = db.groups().list();
-		
-		                       db.tasks().add(new InitialTask()/*set values*/);
-		ArrayList<Task> tsks = db.tasks().list();
-		
-		boolean te = db.task("Task 1").exists();
-		Task    pt = db.task("Task 1").information();
-		             db.task("Task 1").delete();
-		             db.task("Task 1").edit(new EditTask().importance(10));
+//		
+//		                       db.tasks().add(new InitialTask()/*set values*/);
+//		ArrayList<Task> tsks = db.tasks().list();
+//		
+//		boolean te = db.task("Task 1").exists();
+//		Task    pt = db.task("Task 1").information();
+//		             db.task("Task 1").delete();
+//		             db.task("Task 1").edit(new EditTask().importance(10));
 	}
 
 }

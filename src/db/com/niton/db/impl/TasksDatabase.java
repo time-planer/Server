@@ -15,16 +15,27 @@ import com.niton.db.Tables;
 import com.niton.db.tables.records.TaskRecord;
 import com.niton.model.InitialTask;
 import com.niton.model.Task;
-
+/**
+ * 
+ * @author Tobias Schrottwieser
+ * 27.02.2019
+ * 17:05:59
+ */
 public class TasksDatabase {
 
 	private String user;
 	private DSLContext sql;
-
+	/**
+	 * 
+	 * @param sql
+	 */
 	public TasksDatabase(DSLContext sql) {
 		this.sql = sql;
 	}
-
+	/**
+	 * 
+	 * @param initialTask
+	 */
 	public void add(InitialTask initialTask) {
 		
 //		sql.insertQuery(TASK).addRecord(new TaskRecord(initialTask.getName(), toDate(initialTask.getDeadline()), toDate(initialTask.getPlanedDate()), initialTask.getDescription(),UByte.valueOf(initialTask.getImportance()) , null, null, null, user, null));
@@ -34,7 +45,10 @@ public class TasksDatabase {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<Task> list() {
 		ArrayList<Task> at = new ArrayList<>();
 		SelectConditionStep<Record> a = sql.select().from(Tables.TASK).where(Tables.TASK.GROUP_UID.eq(Database.getInstance().user().privateUID()));
@@ -52,15 +66,26 @@ public class TasksDatabase {
 		}
 		return at;
 	}
-	
+	/**
+	 * 
+	 * @param sql2
+	 */
 	public void setSQL(DSLContext sql2) {
 		sql = sql2;
 		
 	}
+	/**
+	 * 
+	 * @param user
+	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
-
+	/**
+	 * 
+	 * @param ld
+	 * @return
+	 */
 	private Date toDate(LocalDate ld) {
 		return Date.valueOf(ld);
 	}

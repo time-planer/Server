@@ -1,5 +1,7 @@
 package com.niton.db.impl;
-
+/**
+ * 
+ */
 import static com.niton.db.Tables.USERS;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -18,11 +20,17 @@ import com.niton.media.crypt.SimpleAES;
 public class UserDatabase {
 	private DSLContext sql;
 	private String email;
-
+	/**
+	 * 
+	 * @param sql
+	 */
 	public UserDatabase(DSLContext sql) {
 		this.sql = sql;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String apikey() {
 		return sql.select(USERS.APIKEY).from(USERS).where(USERS.EMAIL.eq(email)).fetch().get(0).component1();
 
@@ -47,7 +55,9 @@ public class UserDatabase {
 		}
 		return null;
 	}
-
+	/**
+	 * 
+	 */
 	public void delete() {
 		sql.deleteFrom(USERS).where(USERS.EMAIL.eq(email));
 	}
@@ -66,11 +76,18 @@ public class UserDatabase {
 			return null;
 		}
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean exists() {
 		return sql.select().from(USERS).where(USERS.EMAIL.eq(email)).fetch().size() > 0;
 	}
-
+	/**
+	 * 
+	 * @param pwd
+	 * @return
+	 */
 	private byte[] getKeyFrom(String pwd) {
 		int n = 7;
 		byte[] base = pwd.getBytes();
@@ -82,7 +99,11 @@ public class UserDatabase {
 		}
 		return key;
 	}
-
+	/**
+	 * 
+	 * @param password
+	 * @return
+	 */
 	public boolean login(String password) {
 		try {
 			String enc = sql.select(USERS.PASSWORD).from(USERS).where(USERS.EMAIL.eq(email)).fetch().get(0).component1();
@@ -91,20 +112,33 @@ public class UserDatabase {
 			return false;
 		}
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public String privateUID() {
 		return sql.select(USERS.PRIVATE_GROUP).from(USERS).where(USERS.EMAIL.eq(email)).limit(1).fetch().get(0).get(USERS.PRIVATE_GROUP);
 	}
-
+	/**
+	 * 
+	 * @param name
+	 * @param password
+	 */
 	public void register(String name, String password) {
 		sql.insertInto(USERS, USERS.EMAIL, USERS.NAME, USERS.PASSWORD).values(email, name, encryptPwd(password))
 		.execute();
 	}
-
+	/**
+	 * 
+	 * @param email
+	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	/**
+	 * 
+	 * @param sql2
+	 */
 	public void setSql(DSLContext sql2) {
 		sql = sql2;
 		
