@@ -1,7 +1,5 @@
 package com.niton.db.impl;
-/**
- * 
- */
+
 import static com.niton.db.Tables.USERS;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -16,20 +14,24 @@ import javax.crypto.NoSuchPaddingException;
 import org.jooq.DSLContext;
 
 import com.niton.media.crypt.SimpleAES;
-
+/**
+ * Contains the methodes which are used for the user data
+ * @author Tobias Schrottwieser
+ * 27.02.2019
+ * 19:05:25
+ */
 public class UserDatabase {
 	private DSLContext sql;
 	private String email;
 	/**
-	 * 
-	 * @param sql
+	 * Default Constructur
+	 * @param sql current sql connection
 	 */
 	public UserDatabase(DSLContext sql) {
 		this.sql = sql;
 	}
 	/**
-	 * 
-	 * @return
+	 * @return the apikey
 	 */
 	public String apikey() {
 		return sql.select(USERS.APIKEY).from(USERS).where(USERS.EMAIL.eq(email)).fetch().get(0).component1();
@@ -37,9 +39,7 @@ public class UserDatabase {
 	}
 
 	/**
-	 * @param enc
-	 * @param pwd
-	 * @return null on wrong key
+	 * decrypts a password
 	 */
 	private String decryptPwd(String enc, String pwd) {
 		try {
@@ -56,15 +56,14 @@ public class UserDatabase {
 		return null;
 	}
 	/**
-	 * 
+	 * deletes a user
 	 */
 	public void delete() {
 		sql.deleteFrom(USERS).where(USERS.EMAIL.eq(email));
 	}
 
 	/**
-	 * @param pwd
-	 * @return null on error
+	 * encrypts a password
 	 */
 	private String encryptPwd(String pwd) {
 		try {
@@ -77,16 +76,13 @@ public class UserDatabase {
 		}
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a value which describes if a user exists
 	 */
 	public boolean exists() {
 		return sql.select().from(USERS).where(USERS.EMAIL.eq(email)).fetch().size() > 0;
 	}
 	/**
-	 * 
-	 * @param pwd
-	 * @return
+	 * returns a byte array of acceptable bit key length
 	 */
 	private byte[] getKeyFrom(String pwd) {
 		int n = 7;
@@ -100,9 +96,9 @@ public class UserDatabase {
 		return key;
 	}
 	/**
-	 * 
-	 * @param password
-	 * @return
+	 * Is managing the login process
+	 * @param password the inserted password
+	 * @return a boolean which describes if the login is legit
 	 */
 	public boolean login(String password) {
 		try {
@@ -113,34 +109,32 @@ public class UserDatabase {
 		}
 	}
 	/**
-	 * 
-	 * @return
+	 * @return the private uid if a user
 	 */
 	public String privateUID() {
 		return sql.select(USERS.PRIVATE_GROUP).from(USERS).where(USERS.EMAIL.eq(email)).limit(1).fetch().get(0).get(USERS.PRIVATE_GROUP);
 	}
 	/**
-	 * 
-	 * @param name
-	 * @param password
+	 * Is managing the registration process
+	 * @param name the name of the user inserted
+	 * @param password the password of the user 
 	 */
 	public void register(String name, String password) {
 		sql.insertInto(USERS, USERS.EMAIL, USERS.NAME, USERS.PASSWORD).values(email, name, encryptPwd(password))
 		.execute();
 	}
 	/**
-	 * 
-	 * @param email
+	 * Sets the email address
+	 * @param email the email address
 	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 	/**
-	 * 
-	 * @param sql2
+	 * Sets the sql connection
+	 * @param sql2 the sql connection
 	 */
 	public void setSql(DSLContext sql2) {
-		sql = sql2;
-		
+		sql = sql2;	
 	}
 }

@@ -72,15 +72,7 @@ public class Validator {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	/**
-	 * 
-	 * @param password
-	 * @return
-	 */
-	public boolean checkPassword(String password) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+
 	/**
 	 * 
 	 * @param registrationRequest

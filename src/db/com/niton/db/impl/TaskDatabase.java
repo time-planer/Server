@@ -13,7 +13,7 @@ import com.niton.db.tables.records.TaskRecord;
 import com.niton.model.EditTask;
 import com.niton.model.Task;
 /**
- * 
+ * Includes the actions which are used for tasks
  * @author Tobias Schrottwieser
  * 27.02.2019
  * 17:05:55
@@ -24,21 +24,21 @@ public class TaskDatabase {
 	private DSLContext sql;
 
 	/**
-	 * 
+	 * Default Constructor
 	 * @param sql
 	 */
 	public TaskDatabase(DSLContext sql) {
 		this.sql = sql;
 	}
 	/**
-	 * 
+	 * Used to delete a task
 	 */
 	public void delete() {
 		sql.delete(TASK).where(thisPrivateTask()).execute();
 	}
 	/**
-	 * 
-	 * @param importance
+	 * Used to edit a task
+	 * @param importance the importancy
 	 */
 	public void edit(EditTask importance) {
 		TaskRecord r = sql.selectFrom(TASK).where(thisPrivateTask()).fetchOne();
@@ -46,15 +46,13 @@ public class TaskDatabase {
 		r.store();
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a boolean which is saying if task exists
 	 */
 	public boolean exists() {
 		return sql.select().from(TASK).where(thisPrivateTask()).fetch().size()>0;
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a condition
 	 */
 	private Condition thisPrivateTask() {
 		return 
@@ -68,8 +66,7 @@ public class TaskDatabase {
 				);
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a task with all variables 
 	 */
 	public Task information() {
 		SelectConditionStep<Record> a = sql.select().from(TASK).where(thisPrivateTask()).and(TASK.NAME.eq(taskname));
@@ -85,23 +82,22 @@ public class TaskDatabase {
 		return t;
 	}
 	/**
-	 * 
-	 * @param sql2
+	 * Sets the sql connection
+	 * @param sql2 the new sql connection
 	 */
 	public void setSQL(DSLContext sql2) {
 		sql = sql2;
-		
 	}
 	/**
-	 * 
-	 * @param taskname
+	 * Sets thetask name
+	 * @param taskname the new task name
 	 */
 	public void setTaskname(String taskname) {
 		this.taskname = taskname;
 	}
 	/**
-	 * 
-	 * @param user
+	 * Sets a user
+	 * @param user the newser
 	 */
 	public void setUser(String user) {
 		this.user = user;

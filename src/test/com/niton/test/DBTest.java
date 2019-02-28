@@ -4,7 +4,12 @@ import java.util.ArrayList;
 
 import com.niton.db.Database;
 import com.niton.model.*;
-
+/**
+ * Used for debugging
+ * @author Tobias Schrottwieser
+ * 27.02.2019
+ * 19:04:46
+ */
 public class DBTest {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException, InterruptedException {
