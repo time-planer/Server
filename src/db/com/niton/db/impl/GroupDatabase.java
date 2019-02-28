@@ -9,7 +9,7 @@ import com.niton.model.Group;
 import com.niton.model.GroupMember;
 import com.niton.model.ReducedGroup;
 /**
- * 
+ * Includes a few methodes to operate with the groups and a the data of groups
  * @author Tobias Schrottwieser
  * 27.02.2019
  * 17:12:36
@@ -21,8 +21,8 @@ public class GroupDatabase {
 	private final GroupTaskDatabase task;
 	
 	/**
-	 * 
-	 * @param sql
+	 * Default Constructor
+	 * @param sql the default sql connection
 	 */
 	public GroupDatabase(DSLContext sql) {
 		this.sql = sql;
@@ -30,70 +30,66 @@ public class GroupDatabase {
 		task = new GroupTaskDatabase(user,sql);
 	}
 	/**
-	 * 
+	 * Used to delete a group
 	 */
 	public void delete() {
 		// TODO Auto-generated method stub
 		
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a group object with all details
 	 */
 	public Group detailed() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	/**
-	 * 
-	 * @param name
+	 * Used to edit a group
+	 * @param name new for the group
 	 */
 	public void edit(EditGroup name) {
 		// TODO Auto-generated method stub
 		
 	}
 	/**
-	 * 
-	 * @return
+	 * @return returns a boolean which describes if a group exists
 	 */
 	public boolean exists() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a object with the group informations
 	 */
 	public ReducedGroup information() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	/**
-	 * 
-	 * @param string
-	 * @return
+	 * returns information of a user in a group
+	 * @param string user name
+	 * @return informations about a user
 	 */
 	public GroupMember member(String string) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	/**
-	 * 
-	 * @return
+	 * @return a list with all group members
 	 */
 	public ArrayList<GroupMember> members() {
 		return null;
 	}
 	/**
-	 * 
-	 * @param sql
+	 * Sets a sql connection 
+	 * @param sql the new sql connection
 	 */
 	public void setSql(DSLContext sql) {
 		this.sql = sql;
 	}
 	/**
-	 * 
-	 * @param uid
+	 * Sets the UID
+	 * @param uid the new UID
 	 */
 	public void setUid(String uid) {
 		this.uid = uid;
@@ -101,27 +97,17 @@ public class GroupDatabase {
 		task.setUid(uid);
 	}
 	/**
-	 * 
-	 * @param user
+	 * Sets the uder
+	 * @param user the new user
 	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
 	public GroupTaskDatabase task(String name) {
 		task.setTaskName(name);
 		return task;
 	}
-	/**
-	 * 
-	 * @return
-	 */
 	public GroupTasksDatabase tasks() {
 		return tasks;
 	}
-
 }
