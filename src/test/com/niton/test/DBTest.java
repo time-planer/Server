@@ -39,7 +39,7 @@ public class DBTest {
 		               db.group("arandomID").task("Task 1").edit(new EditTask().importance(10));
 		               
 		ArrayList<ReducedGroup>   grps = db.groups().created();
-	                              db.groups().add(new InitialGroup()/*setValue*/);
+	                              db.groups().create(new InitialGroup()/*setValue*/);
 		                        
 	                                    
 	                                     db.groups().create(new InitialGroup().name("Task 2").description("AA radoom"));

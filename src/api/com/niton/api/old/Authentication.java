@@ -22,7 +22,7 @@ public class Authentication  {
 			return sendError(203,MessageEnum.NO_PASSWORD);
 		if(email == null || email.equals(""))
 			return sendError(204, MessageEnum.NO_EMAIL_ADDRESS);
-		if(!v.checkEmail(email) || !v.checkPassword(password))
+		if(!v.checkEmail(email))
 			return sendError(400, MessageEnum.PARAMS_NOT_MATCHING_PATTERN);
 		if(!db.user().exists())
 			return sendError(404, MessageEnum.USER_NOT_FOUND);
