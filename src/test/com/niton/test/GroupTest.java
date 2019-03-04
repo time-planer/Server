@@ -45,5 +45,6 @@ public class GroupTest {
 			System.out.println("Group Deleted");
 		}
 		db.user().delete();
+		System.out.println("User Deleted");
 	}
 }
