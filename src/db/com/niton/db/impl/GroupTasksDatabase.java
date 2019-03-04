@@ -35,7 +35,7 @@ public class GroupTasksDatabase {
 	 * @param initialTask contains the variables needed to create the task
 	 */
 	public void add(InitialTask initialTask) {
-		TaskRecord tr = new TaskRecord();
+		TaskRecord tr = TASK.newRecord();
 		tr.setName(initialTask.getName());
 		tr.setDeadline(Date.valueOf(initialTask.getDeadline()));
 		tr.setPlaneddate(Date.valueOf(initialTask.getPlanedDate()));

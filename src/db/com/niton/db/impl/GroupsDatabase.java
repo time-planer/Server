@@ -37,8 +37,8 @@ public class GroupsDatabase {
 	 * @param description new description of the group
 	 */
 	public void create(InitialGroup description) {
-		// TODO Auto-generated method stub
-		GroupRecord gr = new GroupRecord();
+		GroupRecord gr = GROUP.newRecord();
+		gr.attach(sql.configuration());
 		gr.setDescription(description.getDescription());
 		gr.setName(description.getName());
 		gr.setCreator(user);
@@ -48,16 +48,40 @@ public class GroupsDatabase {
 	 * @return a list of all created group of the current user
 	 */
 	public ArrayList<ReducedGroup> created() {
-		// TODO Auto-generated method stub
-		ArrayList<ReducedGroup> list = new ArrayList<ReducedGroup>();
+		ArrayList<ReducedGroup> list = new ArrayList<>();
 		org.jooq.Result<GroupRecord> rg = sql.selectFrom(GROUP).where(GROUP.CREATOR.eq(user)).fetch();
 		for (GroupRecord f : rg) {
 			ReducedGroup pushing = new ReducedGroup();
-			pushing.description(f.getDescription()).name(f.getName()).creationDate(f.getCreationDate().toLocalDate())
-					.members(getGroupMembers(f.getUid()).size()).tasks(getGroupTasks(f.getUid()).size());
+			pushing
+			.description(f.getDescription())
+			.name(f.getName())
+			.creationDate(f.getCreationDate().toLocalDate())
+			.members(getGroupMembers(f.getUid()).size())
+			.tasks(getGroupTasks(f.getUid()).size())
+			.uid(f.getUid());
 			list.add(pushing);
 		}
 		return list;
+	}
+	/**
+	 * @param uid of the current group
+	 * @return a list of all users in a group
+	 */
+	public ArrayList<GroupmemberRecord> getGroupMembers(String uid) {
+		ArrayList<GroupmemberRecord> groupMemberList = new ArrayList<>();
+		org.jooq.Result<GroupmemberRecord> gr = sql.selectFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).fetch();
+		groupMemberList.addAll(gr);
+		return groupMemberList;
+	}
+	/**
+	 * @param uid of the current group
+	 * @return a list of all tasks of a group
+	 */
+	public ArrayList<TaskRecord> getGroupTasks(String uid) {
+		ArrayList<TaskRecord> groupTaskList = new ArrayList<>();
+		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid)).fetch();
+		groupTaskList.addAll(gt);
+		return groupTaskList;
 	}
 	/**
 	 * @return a list of all groups with the current user in it
@@ -66,7 +90,7 @@ public class GroupsDatabase {
 		// TODO Auto-generated method stub
 		ArrayList<GroupmemberRecord> gmr = new ArrayList<>();
 		gmr.addAll(sql.selectFrom(GROUPMEMBER).where(GROUPMEMBER.USER.eq(user)).fetch());
-		ArrayList<ReducedGroup> list = new ArrayList<ReducedGroup>();
+		ArrayList<ReducedGroup> list = new ArrayList<>();
 		Database db = Database.getInstance();
 		for (GroupmemberRecord r : gmr) {
 			list.add(db.group(r.getGroup()).information());
@@ -87,25 +111,5 @@ public class GroupsDatabase {
 	 */
 	public void setUser(String user) {
 		this.user = user;
-	}
-	/**
-	 * @param uid of the current group
-	 * @return a list of all users in a group
-	 */
-	public ArrayList<GroupmemberRecord> getGroupMembers(String uid) {
-		ArrayList<GroupmemberRecord> groupMemberList = new ArrayList<GroupmemberRecord>();
-		org.jooq.Result<GroupmemberRecord> gr = sql.selectFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).fetch();
-		groupMemberList.addAll(gr);
-		return groupMemberList;
-	}
-	/**
-	 * @param uid of the current group
-	 * @return a list of all tasks of a group
-	 */
-	public ArrayList<TaskRecord> getGroupTasks(String uid) {
-		ArrayList<TaskRecord> groupTaskList = new ArrayList<TaskRecord>();
-		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid)).fetch();
-		groupTaskList.addAll(gt);
-		return groupTaskList;
 	}
 }

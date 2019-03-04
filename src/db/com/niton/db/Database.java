@@ -20,7 +20,7 @@ import com.niton.db.impl.UserDatabase;
 
 public class Database {
 	private static Database instance = null;
-	private static final boolean local = false;
+	private static final boolean local = System.getProperty("user.home").toUpperCase().startsWith("C:");
 
 	public static Database getInstance() {
 		if (instance == null)

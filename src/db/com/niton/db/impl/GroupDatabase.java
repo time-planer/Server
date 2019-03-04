@@ -46,8 +46,6 @@ public class GroupDatabase {
 		sql.deleteFrom(GROUP).where(GROUP.UID.eq(uid));
 	}
 	
-	
-	
 	/**
 	 * @return a group object with all details
 	 */
@@ -74,6 +72,13 @@ public class GroupDatabase {
 		GroupRecord gR = sql.selectFrom(GROUP).where(GROUP.UID.eq(uid)).fetchOne();
 		if(name.getName() != null) {
 			gR.setName(name.getName());
+		}
+		if(name.getMembers() != null) {
+			sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).execute();
+			for(GroupMember  m : name.getMembers()) {
+				GroupmemberRecord record = GROUPMEMBER.newRecord();
+				record.setCreate((byte) (m.isCreate()?1:0));
+			}
 		}
 		//TODO: Alle Atribute
 		gR.store();

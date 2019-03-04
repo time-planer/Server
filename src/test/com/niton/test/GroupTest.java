@@ -13,7 +13,8 @@ public class GroupTest {
 	public static void main(String[] args) {
 		Database db = Database.getInstance();
 		db.setUser("javatest@gmail.com");
-		db.user().register("JAVA API Tester", "IchBin2JavaApis");
+		if(!db.user().exists())
+			db.user().register("JAVA API Tester", "IchBin2JavaApis");
 		System.out.println("Register Worked!");
 		db.groups().create(new InitialGroup().name("Test Group1").description("Desc"));
 		db.groups().create(new InitialGroup().name("Test Group2").description("Desc"));
@@ -43,5 +44,6 @@ public class GroupTest {
 			db.group(string.getUid()).delete();
 			System.out.println("Group Deleted");
 		}
+		db.user().delete();
 	}
 }
