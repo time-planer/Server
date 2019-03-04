@@ -35,7 +35,6 @@ public class GroupTasksDatabase {
 	 * @param initialTask contains the variables needed to create the task
 	 */
 	public void add(InitialTask initialTask) {
-		// TODO Auto-generated method stub
 		TaskRecord tr = new TaskRecord();
 		tr.setName(initialTask.getName());
 		tr.setDeadline(Date.valueOf(initialTask.getDeadline()));
@@ -45,16 +44,17 @@ public class GroupTasksDatabase {
 		tr.setProcess(UByte.valueOf(0));
 		tr.setGroupUid(uid);
 		tr.setUsersEmail(user);
+		tr.store();
 	}
 	/**
 	 * @return a list of all tasks contained in the current group
 	 */
 	public ArrayList<Task> list() {
 		// TODO Auto-generated method stub
-		ArrayList<TaskRecord> groupTaskList = new ArrayList<TaskRecord>();
+		ArrayList<TaskRecord> groupTaskList = new ArrayList<>();
 		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid)).fetch();
 		groupTaskList.addAll(gt);
-		ArrayList<Task> taskList = new ArrayList<Task>();
+		ArrayList<Task> taskList = new ArrayList<>();
 		for(TaskRecord tR : groupTaskList) {
 			Task task = new Task();
 			task.name(tR.getName())
