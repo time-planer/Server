@@ -23,16 +23,17 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("${openapi.Time Planer Server.base-path:/time-planer}")
 public class GroupingApiController implements GroupingApi {
 
-    private final NativeWebRequest request;
+	private final NativeWebRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public GroupingApiController(NativeWebRequest request) {
-        this.request = request;
-    }
+	@org.springframework.beans.factory.annotation.Autowired
+	public GroupingApiController(NativeWebRequest request) {
+		this.request = request;
+	}
 
-    @Override
-	public ResponseEntity<?> createGroup(@Size(min=7,max=320) @PathVariable("username") String username,@ApiParam(value = ""  )  @Valid @RequestBody InitialGroup initialGroup) {
-        return MyGroups.createGroup(request, username, initialGroup);
+	@Override
+	public ResponseEntity<?> createGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@ApiParam(value = "") @Valid @RequestBody InitialGroup initialGroup) {
+		return MyGroups.createGroup(request, username, initialGroup);
 	}
 
 	@Override
@@ -75,12 +76,8 @@ public class GroupingApiController implements GroupingApi {
 	}
 
 	@Override
-    public Optional<NativeWebRequest> getRequest() {
-        return Optional.ofNullable(request);
-    }
-    
-    
-    
-    
+	public Optional<NativeWebRequest> getRequest() {
+		return Optional.ofNullable(request);
+	}
 
 }
