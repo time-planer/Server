@@ -80,6 +80,7 @@ public class GroupDatabase {
 				record.setCreate((byte) (m.isCreate()?1:0));
 				record.setEdit((byte) (m.isCreate()?1:0));
 				record.setCreate((byte) (m.isCreate()?1:0));
+				record.store();
 			}
 		}
 		//TODO: Alle Atribute
