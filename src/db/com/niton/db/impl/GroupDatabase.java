@@ -43,7 +43,7 @@ public class GroupDatabase {
 	 * Used to delete a group
 	 */
 	public void delete() {
-		sql.deleteFrom(GROUP).where(GROUP.UID.eq(uid));
+		sql.deleteFrom(GROUP).where(GROUP.UID.eq(uid)).execute();
 	}
 	
 	/**

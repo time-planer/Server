@@ -59,7 +59,7 @@ public class UserDatabase {
 	 * deletes a user
 	 */
 	public void delete() {
-		sql.deleteFrom(USERS).where(USERS.EMAIL.eq(email));
+		sql.deleteFrom(USERS).where(USERS.EMAIL.eq(email)).execute();
 	}
 
 	/**

@@ -13,8 +13,12 @@ public class GroupTest {
 	public static void main(String[] args) {
 		Database db = Database.getInstance();
 		db.setUser("javatest@gmail.com");
-		if(!db.user().exists())
-			db.user().register("JAVA API Tester", "IchBin2JavaApis");
+		if(db.user().exists()) {
+			System.out.println("Existed!");
+			db.user().delete();
+		}
+
+		db.user().register("JAVA API Tester", "IchBin2JavaApis");
 		System.out.println("Register Worked!");
 		db.groups().create(new InitialGroup().name("Test Group1").description("Desc"));
 		db.groups().create(new InitialGroup().name("Test Group2").description("Desc"));

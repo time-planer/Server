@@ -37,19 +37,12 @@ import io.swagger.annotations.Authorization;
 @Api(value = "Grouping", description = "the Grouping API")
 public interface GroupingApi {
 
-    @ApiOperation(value = "Create a group", nickname = "createGroup", notes = "Here you can create an group", response = Group.class, authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MyGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Group created. Returned the created Group", response = Group.class),
-        @ApiResponse(code = 203, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/mygroups/",
+   
+   @RequestMapping(value = "/user/{username}/mygroups/",
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<?> createGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@ApiParam(value = ""  )  @Valid @RequestBody InitialGroup initialGroup) {
+    default ResponseEntity<?> createGroup(@Size(min=7,max=320) @PathVariable("username") String username,@ApiParam(value = ""  )  @Valid @RequestBody InitialGroup initialGroup) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

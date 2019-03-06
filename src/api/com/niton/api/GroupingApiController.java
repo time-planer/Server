@@ -7,6 +7,8 @@ import javax.validation.constraints.Size;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -14,6 +16,8 @@ import com.niton.api.old.MemberingGroups;
 import com.niton.api.old.MyGroups;
 import com.niton.model.EditGroup;
 import com.niton.model.InitialGroup;
+
+import io.swagger.annotations.ApiParam;
 
 @Controller
 @RequestMapping("${openapi.Time Planer Server.base-path:/time-planer}")
@@ -27,9 +31,8 @@ public class GroupingApiController implements GroupingApi {
     }
 
     @Override
-	public ResponseEntity<?> createGroup(@Size(min = 7, max = 320) String username,
-			@Valid InitialGroup initialGroup) {
-		return MyGroups.createGroup(request, username, initialGroup);
+	public ResponseEntity<?> createGroup(@Size(min=7,max=320) @PathVariable("username") String username,@ApiParam(value = ""  )  @Valid @RequestBody InitialGroup initialGroup) {
+        return MyGroups.createGroup(request, username, initialGroup);
 	}
 
 	@Override
