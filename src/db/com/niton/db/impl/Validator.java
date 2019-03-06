@@ -2,6 +2,8 @@ package com.niton.db.impl;
 
 import java.time.LocalDate;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import com.niton.model.EditGroup;
 import com.niton.model.EditTask;
 import com.niton.model.InitialGroup;
@@ -78,14 +80,19 @@ public class Validator {
 		}
 		if (email.length() > 320 || email.length() < 6) {
 			return false;
-		}
-		if (email.matches(
-				"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")) {
+		}                 //(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])  
+		if (EmailValidator.getInstance().isValid(email)) {
 			String s = new String(com.niton.media.ResurceLoader.readOutOfJarFile("com/niton/resources/emailvalid.txt"));
 			for (String ts : s.split(System.lineSeparator())) {
 				if (email.contains(ts)) {
 					return true;
 				}
+			}
+			if(email.endsWith("ac.at")) {
+				return true;
+			}
+			if(email.endsWith("gv.at")) {
+				return true;
 			}
 		}
 		return false;
