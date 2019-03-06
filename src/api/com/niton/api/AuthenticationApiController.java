@@ -39,7 +39,7 @@ public class AuthenticationApiController implements AuthenticationApi {
 
 	@Override
 	public ResponseEntity<?> registrate(@RequestBody @Valid @NotNull RegistrationRequest registrationRequest) {
-   	return Authentication.registrate(registrationRequest);
+		return Authentication.registrate(registrationRequest);
 //		return new ResponseEntity<>(
 //				new SuccessResponse().message(com.niton.model.SuccessResponse.MessageEnum.REGISTRATION_WORKED),
 //				HttpStatus.OK);
