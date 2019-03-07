@@ -2,6 +2,9 @@ package com.niton.db.impl;
 
 import java.time.LocalDate;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.validator.routines.EmailValidator;
 
 import com.niton.model.EditGroup;
@@ -74,13 +77,18 @@ public class Validator {
 	 * @regex http://emailregex.com
 	 */
 	public boolean checkEmail(String email) {
-		// TODO Auto-generated method stub
 		if (email == null) {
 			return false;
 		}
 		if (email.length() > 320 || email.length() < 6) {
 			return false;
-		}                 //(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])  
+		} // (?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+		try {
+			InternetAddress emailAddr = new InternetAddress(email);
+			emailAddr.validate();
+		} catch (AddressException ex) {
+			return false;
+		}
 		if (EmailValidator.getInstance().isValid(email)) {
 			String s = new String(com.niton.media.ResurceLoader.readOutOfJarFile("com/niton/resources/emailvalid.txt"));
 			for (String ts : s.split(System.lineSeparator())) {
@@ -88,16 +96,15 @@ public class Validator {
 					return true;
 				}
 			}
-			if(email.endsWith("ac.at")) {
+			if (email.endsWith("ac.at")) {
 				return true;
 			}
-			if(email.endsWith("gv.at")) {
+			if (email.endsWith("gv.at")) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
 
 	/**
 	 * Checks if a initial group is legit
@@ -146,7 +153,7 @@ public class Validator {
 		if (registrationRequest.getName().length() < 3 || registrationRequest.getName().length() > 20) {
 			return false;
 		}
-		
+
 		if (registrationRequest.getPassword().matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,40}$")) {
 			return true;
 		}
@@ -160,7 +167,7 @@ public class Validator {
 	 * @return if its legit
 	 */
 	public boolean checkTaskName(String task) {
-		if(task.length() <= 50 && task.length() >= 1) {
+		if (task.length() <= 50 && task.length() >= 1) {
 			return true;
 		}
 		return false;

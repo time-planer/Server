@@ -9,6 +9,7 @@ public class ValidatorTest {
 			"a@student.tgm.ac.at",
 			"a@tgm.ac.at",
 			"a@gmail.com",
+			"test@gmail.com",
 			"a@gmx.at",
 			"areinbimmel@gmx.com"
 		};
@@ -48,7 +49,7 @@ public class ValidatorTest {
 				return;
 			}
 		for (String string : wrongEmails) {
-			if(Validator.getInstance().checkEmail(string))
+			if(!Validator.getInstance().checkEmail(string))
 				System.out.println("Checked "+string+" : RIGHT");
 			else {
 				System.err.println(string+" Should be false but was true!");
