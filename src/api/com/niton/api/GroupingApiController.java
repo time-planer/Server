@@ -37,42 +37,33 @@ public class GroupingApiController implements GroupingApi {
 	}
 
 	@Override
-	public ResponseEntity<?> deleteGroup(@Size(min = 7, max = 320) String username,
-			@Size(min = 30, max = 30) String groupUUID) {
-		return MyGroups.deleteGroup(request, username, groupUUID);
+	public ResponseEntity<?> deleteGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
+        return MyGroups.deleteGroup(request, username, groupUUID);
 	}
 
 	@Override
-	public ResponseEntity<?> editGroup(@Size(min = 7, max = 320) String username,
-			@Size(min = 30, max = 30) String groupUUID, @Valid EditGroup editGroup) {
-		// TODO Auto-generated method stub
-		return MyGroups.editGroup(request, username, groupUUID, editGroup);
+	public ResponseEntity<?> editGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID,@ApiParam(value = "The edit information  You also can only edit a few values or none, all parameters are optional"  )  @Valid @RequestBody EditGroup editGroup) {
+        return MyGroups.editGroup(request, username, groupUUID, editGroup);
 	}
 
 	@Override
-	public ResponseEntity<?> getGroup(@Size(min = 7, max = 320) String username,
-			@Size(min = 30, max = 30) String groupUUID) {
-		// TODO Auto-generated method stub
-		return MemberingGroups.getGroup(request, username, groupUUID);
+	public ResponseEntity<?> getGroup(@Size(min=7,max=320) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
+        return MemberingGroups.getGroup(request, username, groupUUID);
 	}
 
 	@Override
-	public ResponseEntity<?> getGroups(@Size(min = 7, max = 320) String username) {
-		// TODO Auto-generated method stub
-		return MemberingGroups.getGroups(request, username);
+	public ResponseEntity<?> getGroups(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username) {
+        return MemberingGroups.getGroups(request, username);
 	}
 
 	@Override
-	public ResponseEntity<?> getOwnedGroup(@Size(min = 7, max = 320) String username,
-			@Size(min = 30, max = 30) String groupUUID) {
-		// TODO Auto-generated method stub
-		return MyGroups.getOwnedGroup(request, username, groupUUID);
+	public ResponseEntity<?> getOwnedGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
+        return MyGroups.getOwnedGroup(request, username, groupUUID);
 	}
 
 	@Override
-	public ResponseEntity<?> getOwnedGroups(@Size(min = 7, max = 320) String username) {
-		// TODO Auto-generated method stub
-		return MyGroups.getOwnedGroups(request, username);
+	public ResponseEntity<?> getOwnedGroups(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username) {
+        return MyGroups.getOwnedGroups(request, username);
 	}
 
 	@Override
