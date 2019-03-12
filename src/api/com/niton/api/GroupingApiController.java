@@ -36,20 +36,20 @@ public class GroupingApiController implements GroupingApi {
 
 	@Override
 	public ResponseEntity<?> deleteGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MyGroups.deleteGroup(request, username, groupUUID);
 	}
 
 	@Override
 	public ResponseEntity<?> editGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID,
+			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID,
 			@Valid @RequestBody EditGroup editGroup) {
 		return MyGroups.editGroup(request, username, groupUUID, editGroup);
 	}
 
 	@Override
 	public ResponseEntity<?> getGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MemberingGroups.getGroup(request, username, groupUUID);
 	}
 
@@ -60,7 +60,7 @@ public class GroupingApiController implements GroupingApi {
 
 	@Override
 	public ResponseEntity<?> getOwnedGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MyGroups.getOwnedGroup(request, username, groupUUID);
 	}
 
