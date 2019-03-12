@@ -17,8 +17,6 @@ import com.niton.api.old.Tasking;
 import com.niton.model.EditTask;
 import com.niton.model.InitialTask;
 
-import io.swagger.annotations.ApiParam;
-
 @Controller
 @RequestMapping("${openapi.Time Planer Server.base-path:/time-planer}")
 public class TaskingApiController implements TaskingApi {

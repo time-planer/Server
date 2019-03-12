@@ -21,200 +21,129 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import com.niton.model.EditGroup;
-import com.niton.model.ErrorResponse;
-import com.niton.model.Group;
 import com.niton.model.InitialGroup;
-import com.niton.model.ReducedGroup;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
 
 @Validated
-@Api(value = "Grouping", description = "the Grouping API")
 public interface GroupingApi {
 
-   
-   @RequestMapping(value = "/user/{username}/mygroups/",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    default ResponseEntity<?> createGroup(@Size(min=7,max=320) @PathVariable("username") String username,@ApiParam(value = ""  )  @Valid @RequestBody InitialGroup initialGroup) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	@RequestMapping(value = "/user/{username}/mygroups/", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	default ResponseEntity<?> createGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@Valid @RequestBody InitialGroup initialGroup) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
-    }
+	}
 
-    @ApiOperation(value = "Remove Group", nickname = "deleteGroup", notes = "Deletes the group, as all tasks within", response = Group.class, authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MyGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Group successfull removed. In response the removed group", response = Group.class),
-        @ApiResponse(code = 203, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class),
-        @ApiResponse(code = 400, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 403, message = "You tryed to do someting with a group you dont own!", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "group_not_found", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/mygroup/{group_UUID}",
-        produces = { "application/json" }, 
-        method = RequestMethod.DELETE)
-    default ResponseEntity<?> deleteGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = {
+			"application/json" }, method = RequestMethod.DELETE)
+	default ResponseEntity<?> deleteGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
-    }
+	}
 
+	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.PATCH)
+	default ResponseEntity<?> editGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID,
+			@Valid @RequestBody EditGroup editGroup) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
-    @ApiOperation(value = "Edit Group", nickname = "editGroup", notes = "Edit some values of a Group.", response = Group.class, authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MyGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Editing worked.  The edited Group in response", response = Group.class),
-        @ApiResponse(code = 203, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class),
-        @ApiResponse(code = 400, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 403, message = "You tryed to do someting with a group you dont own!", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "group_not_found", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/mygroup/{group_UUID}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.PATCH)
-    default ResponseEntity<?> editGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID,@ApiParam(value = "The edit information  You also can only edit a few values or none, all parameters are optional"  )  @Valid @RequestBody EditGroup editGroup) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    }
+	@RequestMapping(value = "/user/{username}/group/{group_UUID}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	default ResponseEntity<?> getGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
+	}
 
-    @ApiOperation(value = "Get Group Task informations", nickname = "getGroup", notes = "Get information about a group", response = ReducedGroup.class, authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MemberingGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The complete group in response", response = ReducedGroup.class),
-        @ApiResponse(code = 203, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class),
-        @ApiResponse(code = 400, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "group_not_found", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/group/{group_UUID}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<?> getGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	@RequestMapping(value = "/user/{username}/groups/", produces = { "application/json" }, method = RequestMethod.GET)
+	default ResponseEntity<?> getGroups(@Size(min = 7, max = 320) @PathVariable("username") String username) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
-    }
+	}
 
+	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	default ResponseEntity<?> getOwnedGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
+			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
-    @ApiOperation(value = "Get all membered groups", nickname = "getGroups", notes = "Here you can get all groups where you are a member", response = ReducedGroup.class, responseContainer = "List", authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MemberingGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The List of all Groups(reduced version) the user created", response = ReducedGroup.class, responseContainer = "List"),
-        @ApiResponse(code = 203, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/groups/",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<?> getGroups(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    }
+	@RequestMapping(value = "/user/{username}/mygroups/", produces = { "application/json" }, method = RequestMethod.GET)
+	default ResponseEntity<?> getOwnedGroups(@Size(min = 7, max = 320) @PathVariable("username") String username) {
+		getRequest().ifPresent(request -> {
+			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+					ApiUtil.setExampleResponse(request, "application/json",
+							"{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
+					break;
+				}
+			}
+		});
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
+	}
 
-    @ApiOperation(value = "Get detailed information", nickname = "getOwnedGroup", notes = "Get detailed information about a group", response = Group.class, authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MyGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The complete group in response", response = Group.class),
-        @ApiResponse(code = 203, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class),
-        @ApiResponse(code = 400, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 403, message = "You tryed to do someting with a group you dont own!", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "group_not_found", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/mygroup/{group_UUID}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<?> getOwnedGroup(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username,@Size(min=30,max=30) @ApiParam(value = "The UUID of the group to operate with",required=true) @PathVariable("group_UUID") String groupUUID) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"creator\" : \"creator\",  \"members\" : [ {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  }, {    \"edit\" : true,    \"create\" : true,    \"delete\" : true,    \"email\" : \"email\"  } ],  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : [ \"tasks\", \"tasks\" ]}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    @ApiOperation(value = "Get all created groups", nickname = "getOwnedGroups", notes = "Here you can get all groups which the user owns", response = ReducedGroup.class, responseContainer = "List", authorizations = {
-        @Authorization(value = "User_Key")
-    }, tags={ "Grouping","MyGroups", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The List of all Groups(reduced version) the user created", response = ReducedGroup.class, responseContainer = "List"),
-        @ApiResponse(code = 203, message = "There is no API key in the header. Look into the Autentication User Key to get aknowledge how it works", response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "API key is wrong, get a new one. Maybe it expired", response = ErrorResponse.class),
-        @ApiResponse(code = 404, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class) })
-    @RequestMapping(value = "/user/{username}/mygroups/",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<?> getOwnedGroups(@Size(min=7,max=320) @ApiParam(value = "The users name",required=true) @PathVariable("username") String username) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    ApiUtil.setExampleResponse(request, "application/json", "{  \"uid\" : \"uid\",  \"members\" : 0,  \"name\" : \"1BHIT\",  \"description\" : \"description\",  \"creation_date\" : \"2000-01-23\",  \"tasks\" : 5}");
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    default Optional<NativeWebRequest> getRequest() {
-        return Optional.empty();
-    }
+	default Optional<NativeWebRequest> getRequest() {
+		return Optional.empty();
+	}
 
 }

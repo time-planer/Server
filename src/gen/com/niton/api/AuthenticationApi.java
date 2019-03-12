@@ -19,64 +19,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import com.niton.model.ErrorResponse;
-import com.niton.model.InlineResponse200;
 import com.niton.model.RegistrationRequest;
-import com.niton.model.SuccessResponse;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Validated
-@Api(value = "Authentication", description = "the Authentication API")
 public interface AuthenticationApi {
 
 	default Optional<NativeWebRequest> getRequest() {
 		return Optional.empty();
 	}
 
-	@ApiOperation(value = "Login", nickname = "login", notes = "Here you authenticate as the user and get his API key", response = InlineResponse200.class, tags = {
-			"Authentication", })
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "login successfull", response = InlineResponse200.class),
-			@ApiResponse(code = 203, message = "The request does not contains a passwort for the user", response = ErrorResponse.class),
-			@ApiResponse(code = 204, message = "No email address", response = ErrorResponse.class),
-			@ApiResponse(code = 400, message = "Some of the parameters did not matched the pattern they should. For example an email adress needs to match the pattern `{some chars}@{provider}.{top level domain}`", response = ErrorResponse.class),
-			@ApiResponse(code = 401, message = "wrong password", response = ErrorResponse.class),
-			@ApiResponse(code = 404, message = "There is no user with such an email address. Maybe he deleted his account", response = ErrorResponse.class) })
 	@RequestMapping(value = "/auth", produces = { "application/json" }, method = RequestMethod.GET)
-	default ResponseEntity<?> login(
-			@NotNull 
-			@ApiParam(value = "The Email Adress of the User", required = true)
-			@Valid
-			@RequestParam(value = "email", required = true)
-			String email,
-			@NotNull
-			@ApiParam(value = "The Uses password", required = true) 
-			@Valid 
-			@RequestParam(value = "password", required = true) 
-			String password
-			){
+	default ResponseEntity<?> login(@NotNull
+
+	@Valid @RequestParam(value = "email", required = true) String email, @NotNull
+
+	@Valid @RequestParam(value = "password", required = true) String password) {
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
 	}
 
-	@ApiOperation(value = "Registration", nickname = "registrate", notes = "Registers a new user. ### Requirements * Name * Email * Password", response = SuccessResponse.class, tags = {
-			"Authentication", })
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "regisration worked", response = SuccessResponse.class),
-			@ApiResponse(code = 400, message = "Some of the parameters did not matched the pattern they should. For example an email adress needs to match the pattern `{some chars}@{provider}.{top level domain}`", response = ErrorResponse.class),
-			@ApiResponse(code = 404, message = "Params missing", response = ErrorResponse.class),
-			@ApiResponse(code = 409, message = "User allready exists", response = ErrorResponse.class) })
-	@RequestMapping(value = "/auth", produces = { "application/json" }, consumes = {"application/json" }, method = RequestMethod.PUT)
+	@RequestMapping(value = "/auth", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.PUT)
 	default ResponseEntity<?> registrate(
-			@ApiParam(value = "", required = true)
-			@Valid 
-			@RequestBody 
-			@NotNull 
-			RegistrationRequest registrationRequest
-	) {
+
+			@Valid @RequestBody @NotNull RegistrationRequest registrationRequest) {
 		System.out.println(registrationRequest);
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
