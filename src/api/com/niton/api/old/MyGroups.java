@@ -41,7 +41,7 @@ public  class MyGroups {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
-		if (initialGroup == null || !v.checkInitGroup(initialGroup))
+		if (initialGroup == null /*|| !v.checkInitGroup(initialGroup)*/)
 			return sendError(400, MessageEnum.PARAMS_NOT_MATCHING_PATTERN);
 		ArrayList<ReducedGroup> owned = db.groups().created();
 		db.groups().create(initialGroup);
