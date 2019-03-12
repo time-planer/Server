@@ -184,7 +184,7 @@ public class Validator {
 		if (groupUUID == null) {
 			return false;
 		}
-		if (groupUUID.length() > 1 || groupUUID.length() < 30) {
+		if (groupUUID.length() > 30 || groupUUID.length() < 1) {
 			return false;
 		}
 		isValid(groupUUID);
