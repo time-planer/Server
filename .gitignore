@@ -19,3 +19,5 @@ target/*/*/*
 *.jar
 .settings/org.eclipse.jdt.core.prefs
 /target/
+target/eds.war
+*.war
