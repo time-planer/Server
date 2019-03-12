@@ -53,13 +53,13 @@ public class OpenAPI2SpringBoot extends SpringBootServletInitializer implements 
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/*").allowedOrigins("*").allowCredentials(true)
-						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS")
+						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS","OPTIONS","*")
 						.allowedHeaders("Content-Type","user-key","user_key","*");
 				registry.addMapping("/").allowedOrigins("*").allowCredentials(true)
-						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS")
+						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS","OPTIONS","*")
 						.allowedHeaders("Content-Type","user-key","user_key","*");
 				registry.addMapping("/**").allowedOrigins("*").allowCredentials(true)
-						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS")
+						.allowedMethods("PUT","GET","POST","PATCH","UPDATE","OPTIONS","HEADERS","OPTIONS","*")
 						.allowedHeaders("Content-Type","user-key","user_key","*");
 			}
 		};
