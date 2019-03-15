@@ -43,16 +43,15 @@ public class Validator {
 	 * @return if its legit
 	 */
 	public boolean checkEditGroup(EditGroup editGroup) {
-		if ((isValid(editGroup.getName()) && (editGroup.getName().length() >= 3 && editGroup.getName().length() <= 100))
-				&& editGroup.getDescription().length() <= 2500 && editGroup.getDescription().length() >= 0) {
-			for (int i = 0; i < editGroup.getMembers().size(); i++) {
-				String s = editGroup.getMembers().get(i).getEmail();
-				if (checkEmail(s)) {
-					return true;
-				}
-			}
+		if (editGroup.getName() != null) {
+			if (!isValid(editGroup.getName()) || editGroup.getName().length() < 3 || editGroup.getName().length() > 100)
+				return false;
 		}
-		return false;
+		if (editGroup.getDescription() != null) {
+			if (editGroup.getDescription().length() > 2500 || editGroup.getDescription().length() < 0)
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -194,7 +193,7 @@ public class Validator {
 	/**
 	 * checks if a String is valid
 	 * 
-	 * @param matteoCode wuid which should get checked
+	 * @param matteoCode uid which should get checked
 	 * @return boolean if its valid or not
 	 */
 	private boolean isValid(String matteoCode) {

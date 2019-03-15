@@ -77,9 +77,12 @@ public class GroupDatabase {
 			sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).execute();
 			for(GroupMember  m : name.getMembers()) {
 				GroupmemberRecord record = GROUPMEMBER.newRecord();
+				record.attach(sql.configuration());
 				record.setCreate((byte) (m.isCreate()?1:0));
 				record.setEdit((byte) (m.isCreate()?1:0));
 				record.setCreate((byte) (m.isCreate()?1:0));
+				record.setUser(m.getEmail());
+				record.setGroup(uid);
 				record.store();
 			}
 		}
