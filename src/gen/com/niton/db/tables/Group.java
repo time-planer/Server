@@ -85,7 +85,7 @@ public class Group extends TableImpl<GroupRecord> {
      * Create a <code>eds.group</code> table reference
      */
     public Group() {
-        this(DSL.name("group"), null);
+        this(DSL.name("eds_group"), null);
     }
 
     /**
