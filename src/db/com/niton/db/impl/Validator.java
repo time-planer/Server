@@ -130,8 +130,12 @@ public class Validator {
 	 * @return if its legit
 	 */
 	public boolean checkInitTask(InitialTask initialTask) {
-		if ((isValid(initialTask.getName()) && initialTask.getName().length() < 51
-				&& initialTask.getName().length() > 0) && (initialTask.getDeadline().isAfter(LocalDate.now()))
+		if (
+				(
+						initialTask.getName().length() < 51
+						&& initialTask.getName().length() > 0
+				) 
+				&& (initialTask.getDeadline().isAfter(LocalDate.now()))
 				&& (initialTask.getPlanedDate().isAfter(LocalDate.now()))
 				&& (initialTask.getDescription().length() <= 2500 && initialTask.getDescription().length() >= 0)
 				&& (initialTask.getImportance() <= 10 && initialTask.getImportance() >= 0)) {
