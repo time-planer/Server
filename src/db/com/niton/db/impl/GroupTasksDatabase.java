@@ -58,6 +58,7 @@ public class GroupTasksDatabase {
 		for(TaskRecord tR : groupTaskList) {
 			Task task = new Task();
 			task.name(tR.getName())
+			.entererAt(tR.getEntererat().toLocalDate())
 			.deadline(tR.getDeadline().toLocalDate())
 			.planedDate(tR.getPlaneddate().toLocalDate())
 			.description(tR.getDescription())

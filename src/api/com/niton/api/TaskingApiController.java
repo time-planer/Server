@@ -30,7 +30,7 @@ public class TaskingApiController implements TaskingApi {
 
 	@Override
 	public ResponseEntity<?> addGroupTask(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID,
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID,
 			@Valid @RequestBody InitialTask initialTask) {
 		return MemberingGroups.addGroupTask(request, username, groupUUID, initialTask);
 	}
@@ -45,7 +45,7 @@ public class TaskingApiController implements TaskingApi {
 	@Override
 	public ResponseEntity<?> deleteGroupTask(@Size(min = 7, max = 320) @PathVariable("username") String username,
 			@Size(min = 1, max = 50) @PathVariable("task") String task,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MemberingGroups.deleteGroupTask(request, username, task, groupUUID);
 	}
 
@@ -58,7 +58,7 @@ public class TaskingApiController implements TaskingApi {
 	@Override
 	public ResponseEntity<?> editGroupTask(@Size(min = 7, max = 320) @PathVariable("username") String username,
 			@Size(min = 1, max = 50) @PathVariable("task") String task,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID,
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID,
 			@Valid @RequestBody EditTask editTask) {
 		return MemberingGroups.editGroupTask(request, username, task, groupUUID, editTask);
 	}
@@ -71,7 +71,7 @@ public class TaskingApiController implements TaskingApi {
 
 	@Override
 	public ResponseEntity<?> getAllGroupTasks(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MemberingGroups.getAllGroupTasks(request, username, groupUUID);
 	}
 
@@ -85,7 +85,7 @@ public class TaskingApiController implements TaskingApi {
 	public ResponseEntity<?> getGroupTask(
 			@Size(min = 7, max = 320) @PathVariable("username") String username,
 			@Size(min = 1, max = 50) @PathVariable("task") String task,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MemberingGroups.getGroupTask(request, username, task, groupUUID);
 	}
 
@@ -104,7 +104,7 @@ public class TaskingApiController implements TaskingApi {
 	@Override
 	public ResponseEntity<?> removeAllGroupTasks(
 			@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 30, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@Size(min = 5, max = 30) @PathVariable("group_UUID") String groupUUID) {
 		return MemberingGroups.removeAllGroupTasks(request, username, groupUUID);
 	}
 
