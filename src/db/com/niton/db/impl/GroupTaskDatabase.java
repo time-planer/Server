@@ -108,5 +108,8 @@ public class GroupTaskDatabase {
 	public void setUid(String uid) {
 		group = uid;
 	}
+	public void setUser(String user) {
+		this.user = user;
+	}
 
 }

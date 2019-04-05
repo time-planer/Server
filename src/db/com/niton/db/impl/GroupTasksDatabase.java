@@ -36,6 +36,7 @@ public class GroupTasksDatabase {
 	 */
 	public void add(InitialTask initialTask) {
 		TaskRecord tr = TASK.newRecord();
+		tr.attach(sql.configuration());
 		tr.setName(initialTask.getName());
 		tr.setDeadline(Date.valueOf(initialTask.getDeadline()));
 		tr.setPlaneddate(Date.valueOf(initialTask.getPlanedDate()));
@@ -72,5 +73,8 @@ public class GroupTasksDatabase {
 	 */
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+	public void setUser(String user) {
+		this.user = user;
 	}
 }

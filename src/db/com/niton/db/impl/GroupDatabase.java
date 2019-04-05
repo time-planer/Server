@@ -173,6 +173,8 @@ public class GroupDatabase {
 	 */
 	public void setUser(String user) {
 		this.user = user;
+		task.setUser(user);
+		tasks.setUser(user);
 	}
 
 	public GroupTaskDatabase task(String name) {
