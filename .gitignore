@@ -21,3 +21,4 @@ target/*/*/*
 /target/
 target/eds.war
 *.war
+run.bat
