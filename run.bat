@@ -1,1 +1,1 @@
-java -jar .\TimePlanerServer-2.7.7.jar
+java -jar .\target\TimePlanerServer-2.7.7.jar
