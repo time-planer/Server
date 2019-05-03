@@ -23,6 +23,7 @@ public class AccountManager {
 			String path = "ou=HIT,ou=schueler,ou=people,ou=identity,dc=tgm,dc=ac,dc=at";
 			NamingEnumeration<NameClassPair> enu = dir.list(path);
 			while (enu.hasMoreElements()) {
+				boolean right = false;
 				NameClassPair object = enu.nextElement();
 				String fullPath = object.getNameInNamespace();
 				String fillCN = fullPath.split(",")[0];
@@ -33,9 +34,13 @@ public class AccountManager {
 				atrs = answer.getAll();
 				while (atrs.hasMoreElements()) {
 					Attribute attribute = atrs.nextElement();
-					if(attribute.getID().equals("name")) {
-						return attribute.get().toString();
+					if(attribute.getID().equals("mailNickname") && attribute.get().equals(email.split("@")[0])) {
+						right = true;
+						break;
 					}
+				}
+				if(right) {
+					return fillCN;
 				}
 				
 			}
