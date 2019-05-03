@@ -18,6 +18,17 @@ public class Authentication  {
 
 	public static ResponseEntity<?> login(String email, String password) {
 		db.setUser(email);
+		if(email.endsWith("tgm.ac.at")) {
+			String fullName = AccountManager.isAccountValid(email, password);
+			if(fullName != null) {
+				if(!db.user().exists()) {
+					db.user().register(fullName, password);
+				}
+				return responde(new InlineResponse200().userKey(db.user().apikey()));
+			}else{
+				return sendError(401, MessageEnum.NO_PERMISSION);
+			}
+		}
 		if(password == null || password.equals(""))
 			return sendError(203,MessageEnum.NO_PASSWORD);
 		if(email == null || email.equals(""))
