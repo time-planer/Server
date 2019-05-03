@@ -1,6 +1,6 @@
 package com.niton.db.impl;
 
-import static com.niton.db.tables.Group.GROUP;
+import static com.niton.db.tables.EdsGroup.EDS_GROUP;
 import static com.niton.db.tables.Groupmember.GROUPMEMBER;
 import static com.niton.db.tables.Task.TASK;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.jooq.DSLContext;
 
 import com.niton.db.Database;
-import com.niton.db.tables.records.GroupRecord;
+import com.niton.db.tables.records.EdsGroupRecord;
 import com.niton.db.tables.records.GroupmemberRecord;
 import com.niton.db.tables.records.TaskRecord;
 import com.niton.model.InitialGroup;
@@ -37,7 +37,7 @@ public class GroupsDatabase {
 	 * @param description new description of the group
 	 */
 	public void create(InitialGroup description) {
-		GroupRecord gr = GROUP.newRecord();
+		EdsGroupRecord gr = EDS_GROUP.newRecord();
 		gr.attach(sql.configuration());
 		gr.setDescription(description.getDescription());
 		gr.setName(description.getName());
@@ -49,8 +49,8 @@ public class GroupsDatabase {
 	 */
 	public ArrayList<ReducedGroup> created() {
 		ArrayList<ReducedGroup> list = new ArrayList<>();
-		org.jooq.Result<GroupRecord> rg = sql.selectFrom(GROUP).where(GROUP.CREATOR.eq(user)).fetch();
-		for (GroupRecord f : rg) {
+		org.jooq.Result<EdsGroupRecord> rg = sql.selectFrom(EDS_GROUP).where(EDS_GROUP.CREATOR.eq(user)).fetch();
+		for (EdsGroupRecord f : rg) {
 			ReducedGroup pushing = new ReducedGroup();
 			pushing
 			.description(f.getDescription())
@@ -64,22 +64,22 @@ public class GroupsDatabase {
 		return list;
 	}
 	/**
-	 * @param uid of the current group
+	 * @param integer of the current group
 	 * @return a list of all users in a group
 	 */
-	public ArrayList<GroupmemberRecord> getGroupMembers(String uid) {
+	public ArrayList<GroupmemberRecord> getGroupMembers(Integer integer) {
 		ArrayList<GroupmemberRecord> groupMemberList = new ArrayList<>();
-		org.jooq.Result<GroupmemberRecord> gr = sql.selectFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).fetch();
+		org.jooq.Result<GroupmemberRecord> gr = sql.selectFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(integer)).fetch();
 		groupMemberList.addAll(gr);
 		return groupMemberList;
 	}
 	/**
-	 * @param uid of the current group
+	 * @param integer of the current group
 	 * @return a list of all tasks of a group
 	 */
-	public ArrayList<TaskRecord> getGroupTasks(String uid) {
+	public ArrayList<TaskRecord> getGroupTasks(Integer integer) {
 		ArrayList<TaskRecord> groupTaskList = new ArrayList<>();
-		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid)).fetch();
+		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(integer)).fetch();
 		groupTaskList.addAll(gt);
 		return groupTaskList;
 	}

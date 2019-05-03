@@ -183,15 +183,8 @@ public class Validator {
 	 * @param groupUUID the group UID
 	 * @return if its legit
 	 */
-	public boolean checkUID(String groupUUID) {
-		if (groupUUID == null) {
-			return false;
-		}
-		if (groupUUID.length() > 30 || groupUUID.length() < 1) {
-			return false;
-		}
-		isValid(groupUUID);
-		return true;
+	public boolean checkUID(Integer groupUUID) {
+		return groupUUID != null;
 	}
 
 	/**

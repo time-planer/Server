@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.jooq.DSLContext;
 import org.jooq.types.UByte;
 
+import com.niton.db.routines.Addtask;
 import com.niton.db.tables.records.TaskRecord;
 import com.niton.model.InitialTask;
 import com.niton.model.Task;
@@ -20,7 +21,7 @@ import com.niton.model.Task;
 public class GroupTasksDatabase {
 	private String user;
 	private DSLContext sql;
-	private String uid;
+	private Integer uid;
 	/**
 	 * Default Constructor
 	 * @param user
@@ -35,17 +36,16 @@ public class GroupTasksDatabase {
 	 * @param initialTask contains the variables needed to create the task
 	 */
 	public void add(InitialTask initialTask) {
-		TaskRecord tr = TASK.newRecord();
-		tr.attach(sql.configuration());
-		tr.setName(initialTask.getName());
-		tr.setDeadline(Date.valueOf(initialTask.getDeadline()));
-		tr.setPlaneddate(Date.valueOf(initialTask.getPlanedDate()));
-		tr.setDescription(initialTask.getDescription());
-		tr.setImportance(UByte.valueOf(initialTask.getImportance()));
-		tr.setProcess(UByte.valueOf(0));
-		tr.setGroupUid(uid);
-		tr.setUsersEmail(user);
-		tr.store();
+		Addtask a = new Addtask();
+//		TaskRecord tr = TASK.newRecord();
+		a.attach(sql.configuration());
+		a.setName_(initialTask.getName());
+		a.setDeadline(Date.valueOf(initialTask.getDeadline()));
+		a.setPlaneddate(Date.valueOf(initialTask.getPlanedDate()));
+		a.setDescription(initialTask.getDescription());
+		a.setImportance(initialTask.getImportance().byteValue());
+		a.setGroupuid(String.valueOf(uid));
+		a.execute();
 	}
 	/**
 	 * @return a list of all tasks contained in the current group
@@ -71,7 +71,7 @@ public class GroupTasksDatabase {
 	/**
 	 * @param uid is used to set the unique uid for the task
 	 */
-	public void setUid(String uid) {
+	public void setUid(Integer uid) {
 		this.uid = uid;
 	}
 	public void setUser(String user) {

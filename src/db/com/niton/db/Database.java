@@ -98,8 +98,8 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
-	public GroupDatabase group(String uid) {
-		group.setUid(uid);
+	public GroupDatabase group(Integer groupUUID) {
+		group.setUid(groupUUID);
 		return group;
 	}
 

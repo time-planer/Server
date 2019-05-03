@@ -42,7 +42,7 @@ public class Group  implements Serializable {
   private String creator;
 
   @JsonProperty("uid")
-  private String uid;
+  private Integer uid;
 
   public Group name(String name) {
     this.name = name;
@@ -182,8 +182,8 @@ public class Group  implements Serializable {
     this.creator = creator;
   }
 
-  public Group uid(String uid) {
-    this.uid = uid;
+  public Group uid(Integer integer) {
+    this.uid = integer;
     return this;
   }
 
@@ -195,11 +195,11 @@ public class Group  implements Serializable {
   @NotNull
 
 @Pattern(regexp="[A-Z0-9a-z]{30}") @Size(min=30,max=30) 
-  public String getUid() {
+  public Integer getUid() {
     return uid;
   }
 
-  public void setUid(String uid) {
+  public void setUid(Integer uid) {
     this.uid = uid;
   }
 

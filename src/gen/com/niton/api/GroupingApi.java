@@ -46,7 +46,7 @@ public interface GroupingApi {
 	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = {
 			"application/json" }, method = RequestMethod.DELETE)
 	default ResponseEntity<?> deleteGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@PathVariable("group_UUID") Integer groupUUID) {
 		getRequest().ifPresent(request -> {
 			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
 				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -63,7 +63,7 @@ public interface GroupingApi {
 	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.PATCH)
 	default ResponseEntity<?> editGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID,
+			@PathVariable("group_UUID") Integer groupUUID,
 			@Valid @RequestBody EditGroup editGroup) {
 		getRequest().ifPresent(request -> {
 			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
@@ -81,7 +81,7 @@ public interface GroupingApi {
 	@RequestMapping(value = "/user/{username}/group/{group_UUID}", produces = {
 			"application/json" }, method = RequestMethod.GET)
 	default ResponseEntity<?> getGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@PathVariable("group_UUID") Integer groupUUID) {
 		getRequest().ifPresent(request -> {
 			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
 				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -113,7 +113,7 @@ public interface GroupingApi {
 	@RequestMapping(value = "/user/{username}/mygroup/{group_UUID}", produces = {
 			"application/json" }, method = RequestMethod.GET)
 	default ResponseEntity<?> getOwnedGroup(@Size(min = 7, max = 320) @PathVariable("username") String username,
-			@Size(min = 1, max = 30) @PathVariable("group_UUID") String groupUUID) {
+			@PathVariable("group_UUID") Integer groupUUID) {
 		getRequest().ifPresent(request -> {
 			for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
 				if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

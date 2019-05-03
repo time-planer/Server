@@ -34,7 +34,7 @@ public class ReducedGroup  implements Serializable {
   private Integer tasks;
 
   @JsonProperty("uid")
-  private String uid;
+  private Integer uid;
 
   public ReducedGroup name(String name) {
     this.name = name;
@@ -144,8 +144,8 @@ public class ReducedGroup  implements Serializable {
     this.tasks = tasks;
   }
 
-  public ReducedGroup uid(String uid) {
-    this.uid = uid;
+  public ReducedGroup uid(Integer integer) {
+    this.uid = integer;
     return this;
   }
 
@@ -157,11 +157,11 @@ public class ReducedGroup  implements Serializable {
   @NotNull
 
 @Pattern(regexp="[A-Za-z0-9]{30}") @Size(min=30,max=30) 
-  public String getUid() {
+  public Integer getUid() {
     return uid;
   }
 
-  public void setUid(String uid) {
+  public void setUid(Integer uid) {
     this.uid = uid;
   }
 

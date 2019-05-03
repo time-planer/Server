@@ -50,7 +50,7 @@ public  class MyGroups {
 		return responde(db.group(owned2.get(0).getUid()).detailed());
 	}
 
-	public static ResponseEntity<?> deleteGroup(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> deleteGroup(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -65,7 +65,7 @@ public  class MyGroups {
 		return responde(g);
 	}
 
-	public static ResponseEntity<?> editGroup(NativeWebRequest request, String username, String groupUUID, EditGroup editGroup) {
+	public static ResponseEntity<?> editGroup(NativeWebRequest request, String username, Integer groupUUID, EditGroup editGroup) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -81,7 +81,7 @@ public  class MyGroups {
 		return responde(db.group(groupUUID).detailed());
 	}
 
-	public static ResponseEntity<?> getGroup(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> getGroup(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -94,7 +94,7 @@ public  class MyGroups {
 		return responde(db.group(groupUUID).detailed());
 	}
 
-	public static ResponseEntity<?> getOwnedGroup(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> getOwnedGroup(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;

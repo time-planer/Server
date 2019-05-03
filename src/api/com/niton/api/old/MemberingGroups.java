@@ -20,7 +20,7 @@ public class MemberingGroups {
 	private static Database db = Database.getInstance();
 	private static Validator v = Validator.getInstance();
 
-	public static ResponseEntity<?> addGroupTask(NativeWebRequest nativeWebRequest, String username, String groupUUID,
+	public static ResponseEntity<?> addGroupTask(NativeWebRequest nativeWebRequest, String username, Integer groupUUID,
 			InitialTask initialTask) {
 		ResponseEntity<ErrorResponse> context = authentificate(nativeWebRequest, username);
 		if (context != null)
@@ -50,7 +50,7 @@ public class MemberingGroups {
 		return null;
 	}
 
-	public static ResponseEntity<?> deleteGroupTask(NativeWebRequest request, String username, String task, String groupUUID) {
+	public static ResponseEntity<?> deleteGroupTask(NativeWebRequest request, String username, String task, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -67,7 +67,7 @@ public class MemberingGroups {
 		return responde(t);
 	}
 
-	public static ResponseEntity<?> editGroupTask(NativeWebRequest request, String username, String task, String groupUUID,
+	public static ResponseEntity<?> editGroupTask(NativeWebRequest request, String username, String task, Integer groupUUID,
 			EditTask editTask) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
@@ -84,7 +84,7 @@ public class MemberingGroups {
 		return responde(db.group(groupUUID).task(task).information());
 	}
 
-	public static ResponseEntity<?> getAllGroupTasks(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> getAllGroupTasks(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -97,7 +97,7 @@ public class MemberingGroups {
 		return responde(db.group(groupUUID).tasks().list());
 	}
 
-	public static ResponseEntity<?> getGroup(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> getGroup(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -119,7 +119,7 @@ public class MemberingGroups {
 		return responde(db.groups().list());
 	}
 
-	public static ResponseEntity<?> getGroupTask(NativeWebRequest request, String username, String task, String groupUUID) {
+	public static ResponseEntity<?> getGroupTask(NativeWebRequest request, String username, String task, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
@@ -134,7 +134,7 @@ public class MemberingGroups {
 		return responde(db.group(groupUUID).task(task).information());
 	}
 
-	public static ResponseEntity<?> removeAllGroupTasks(NativeWebRequest request, String username, String groupUUID) {
+	public static ResponseEntity<?> removeAllGroupTasks(NativeWebRequest request, String username, Integer groupUUID) {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;

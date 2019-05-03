@@ -27,6 +27,7 @@ public class AccountManager {
 				String fullPath = object.getNameInNamespace();
 				String fillCN = fullPath.split(",")[0];
 				fillCN = fillCN.substring(3);
+				System.out.println("Fill CN : "+fillCN);
 				Attributes answer = dir.getAttributes(fullPath);
 				NamingEnumeration<? extends Attribute> atrs = answer.getAll();
 				atrs = answer.getAll();

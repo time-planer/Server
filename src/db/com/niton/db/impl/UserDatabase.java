@@ -111,7 +111,7 @@ public class UserDatabase {
 	/**
 	 * @return the private uid if a user
 	 */
-	public String privateUID() {
+	public Integer privateUID() {
 		return sql.select(USERS.PRIVATE_GROUP).from(USERS).where(USERS.EMAIL.eq(email)).limit(1).fetch().get(0).get(USERS.PRIVATE_GROUP);
 	}
 	/**

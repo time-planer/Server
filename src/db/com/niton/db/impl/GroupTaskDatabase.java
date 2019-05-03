@@ -22,7 +22,7 @@ public class GroupTaskDatabase {
 
 	private String task;
 	private String user;
-	private String group;
+	private Integer group;
 	private final DSLContext sql;
 
 	/**
@@ -105,7 +105,7 @@ public class GroupTaskDatabase {
 	 * Sets new uid
 	 * @param uid the new uid
 	 */
-	public void setUid(String uid) {
+	public void setUid(Integer uid) {
 		group = uid;
 	}
 	public void setUser(String user) {

@@ -1,6 +1,6 @@
 package com.niton.db.impl;
 
-import static com.niton.db.tables.Group.GROUP;
+import static com.niton.db.tables.EdsGroup.EDS_GROUP;
 import static com.niton.db.tables.Groupmember.GROUPMEMBER;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
 import com.niton.db.tables.Groupmember;
-import com.niton.db.tables.records.GroupRecord;
+import com.niton.db.tables.records.EdsGroupRecord;
 import com.niton.db.tables.records.GroupmemberRecord;
 import com.niton.model.EditGroup;
 import com.niton.model.Group;
@@ -25,7 +25,8 @@ import com.niton.model.ReducedGroup;;
  * @author Tobias Schrottwieser 27.02.2019 17:12:36
  */
 public class GroupDatabase {
-	private String user, uid;
+	private String user;
+	Integer uid;
 	private DSLContext sql;
 	private final GroupTasksDatabase tasks;
 	private final GroupTaskDatabase task;
@@ -45,16 +46,16 @@ public class GroupDatabase {
 	 * Used to delete a group
 	 */
 	public void delete() {
-		sql.deleteFrom(GROUP).where(GROUP.UID.eq(uid)).execute();
+		sql.deleteFrom(EDS_GROUP).where(EDS_GROUP.UID.eq(uid)).execute();
 	}
 	
 	/**
 	 * @return a group object with all details
 	 */
 	public Group detailed() {
-		SelectConditionStep<GroupRecord> a = sql.selectFrom(GROUP).where(GROUP.UID.eq(uid));
-		Result<GroupRecord> rs = a.fetch();
-		GroupRecord gR = rs.get(0);
+		SelectConditionStep<EdsGroupRecord> a = sql.selectFrom(EDS_GROUP).where(EDS_GROUP.UID.eq(uid));
+		Result<EdsGroupRecord> rs = a.fetch();
+		EdsGroupRecord gR = rs.get(0);
 		Group rG = new Group()
 				.name(gR.getName())
 				.description(gR.getDescription())
@@ -71,7 +72,7 @@ public class GroupDatabase {
 	 * @param name new for the group
 	 */
 	public void edit(EditGroup name) {
-		GroupRecord gR = sql.selectFrom(GROUP).where(GROUP.UID.eq(uid)).fetchOne();
+		EdsGroupRecord gR = sql.selectFrom(EDS_GROUP).where(EDS_GROUP.UID.eq(uid)).fetchOne();
 		if(name.getName() != null) {
 			gR.setName(name.getName());
 		}
@@ -115,16 +116,16 @@ public class GroupDatabase {
 	 * @return returns a boolean which describes if a group exists
 	 */
 	public boolean exists() {
-		return sql.selectFrom(GROUP).where(GROUP.UID.eq(uid)).fetch().size() > 0;
+		return sql.selectFrom(EDS_GROUP).where(EDS_GROUP.UID.eq(uid)).fetch().size() > 0;
 	}
 	
 	/**
 	 * @return a object with the group informations
 	 */
 	public ReducedGroup information() {
-		SelectConditionStep<GroupRecord> a = sql.selectFrom(GROUP).where(GROUP.UID.eq(uid));
-		Result<GroupRecord> rs = a.fetch();
-		GroupRecord gR = rs.get(0);
+		SelectConditionStep<EdsGroupRecord> a = sql.selectFrom(EDS_GROUP).where(EDS_GROUP.UID.eq(uid));
+		Result<EdsGroupRecord> rs = a.fetch();
+		EdsGroupRecord gR = rs.get(0);
 		ReducedGroup rG = new ReducedGroup()
 				.name(gR.getName())
 				.description(gR.getDescription())
@@ -179,12 +180,12 @@ public class GroupDatabase {
 	/**
 	 * Sets the UID
 	 * 
-	 * @param uid the new UID
+	 * @param integer the new UID
 	 */
-	public void setUid(String uid) {
-		this.uid = uid;
-		tasks.setUid(uid);
-		task.setUid(uid);
+	public void setUid(Integer integer) {
+		this.uid = integer;
+		tasks.setUid(integer);
+		task.setUid(integer);
 	}
 
 	/**

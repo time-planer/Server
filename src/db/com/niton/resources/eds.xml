@@ -3,14 +3,14 @@
   <!-- Configure the database connection here -->
   <jdbc>
     <driver>com.mysql.jdbc.Driver</driver>
-    <url>jdbc:mysql://localhost:3306/eds?serverTimezone=CET</url>
-    <user>eds_server</user>
-    <password>admin</password>
+    <url>jdbc:mysql://projekte.tgm.ac.at:3306/proj_eds?serverTimezone=CET</url>
+    <user>proj_eds</user>
+    <password>EbohLii7</password>
     
     <!-- You can also pass user/password and other JDBC properties in the optional properties tag: -->
     <properties>
-      <property><key>user</key><value>root</value></property>
-      <property><key>password</key><value>10102001</value></property>
+      <property><key>user</key><value>proj_eds</value></property>
+      <property><key>password</key><value>EbohLii7</value></property>
     </properties>
   </jdbc>
 
@@ -92,7 +92,7 @@
 
            If left empty, jOOQ will generate all available schemata. See the
            manual's next section to learn how to generate several schemata -->
-      <inputSchema>eds
+      <inputSchema>proj_eds
       </inputSchema>
     </database>
 
@@ -110,7 +110,7 @@
       <packageName>com.niton.db</packageName>
 
       <!-- The destination directory of your generated classes -->
-      <directory>src/generated</directory>
+      <directory>src/gen</directory>
     </target>
   </generator>
 </configuration>
