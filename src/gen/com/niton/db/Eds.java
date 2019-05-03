@@ -70,7 +70,7 @@ public class Eds extends SchemaImpl {
      * No further instances allowed
      */
     private Eds() {
-        super("eds", null);
+        super("proj_eds", null);
     }
 
 
