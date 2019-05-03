@@ -4,12 +4,14 @@ import static com.niton.db.tables.Group.GROUP;
 import static com.niton.db.tables.Groupmember.GROUPMEMBER;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
+import com.niton.db.tables.Groupmember;
 import com.niton.db.tables.records.GroupRecord;
 import com.niton.db.tables.records.GroupmemberRecord;
 import com.niton.model.EditGroup;
@@ -74,16 +76,35 @@ public class GroupDatabase {
 			gR.setName(name.getName());
 		}
 		if(name.getMembers() != null) {
-			sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.GROUP.eq(uid)).execute();
-			for(GroupMember  m : name.getMembers()) {
-				GroupmemberRecord record = GROUPMEMBER.newRecord();
-				record.attach(sql.configuration());
-				record.setCreate((byte) (m.isCreate()?1:0));
-				record.setEdit((byte) (m.isCreate()?1:0));
-				record.setCreate((byte) (m.isCreate()?1:0));
-				record.setUser(m.getEmail());
-				record.setGroup(uid);
-				record.store();
+			List<GroupMember> newMembers = name.getMembers();
+			List<GroupMember> old = members();
+			for(GroupMember  o : old) {
+				boolean contained = false;
+				for (GroupMember n : newMembers) {
+					if(n.getEmail().equals(o.getEmail()))
+						contained = true;
+				}
+				if(!contained) {
+					sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.USER.eq(user).and(GROUPMEMBER.GROUP.eq(uid))).execute();
+				}
+			}
+			
+			for(GroupMember n : newMembers){
+				boolean contained = false;
+				for (GroupMember o : old) {
+					if(n.getEmail().equals(o.getEmail()))
+						contained = true;
+				}
+				if(!contained) {
+					GroupmemberRecord member = GROUPMEMBER.newRecord();
+					member.attach(sql.configuration());
+					member.setUser(user);
+					member.setGroup(uid);
+					member.setCreate((byte) (n.isCreate()?1:0));
+					member.setEdit((byte) (n.isEdit()?1:0));
+					member.setDelete((byte) (n.isDelete()?1:0));
+					member.store();
+				}
 			}
 		}
 		//TODO: Alle Atribute
