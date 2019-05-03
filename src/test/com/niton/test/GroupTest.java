@@ -30,7 +30,7 @@ public class GroupTest {
 			System.out.println(string);
 		}
 		System.out.println("]");
-		String uid = db.groups().created().get(0).getUid();
+		Integer uid = db.groups().created().get(0).getUid();
 		System.out.println("Test UID = "+uid);
 		System.out.println("Detailed :");
 		System.out.println(db.group(uid).detailed());

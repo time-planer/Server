@@ -21,22 +21,22 @@ public class DBTest {
 		String key = db.user().apikey();
 		             db.user().delete();
   
-		boolean                 ge      = db.group("arandomID").exists();
-		ReducedGroup            rg      = db.group("arandomID").information();
-		Group                   g       = db.group("arandomID").detailed();
-		ArrayList<GroupMember>  mblst   = db.group("arandomID").members();
-		GroupMember             mb      = db.group("arandomID").member("nbrugger@student.tgm.ac.at");
-										  db.group("arandomID").delete();
-										  db.group("arandomID").edit(new EditGroup().name("New Name"));
+		boolean                 ge      = db.group(1).exists();
+		ReducedGroup            rg      = db.group(1).information();
+		Group                   g       = db.group(1).detailed();
+		ArrayList<GroupMember>  mblst   = db.group(1).members();
+		GroupMember             mb      = db.group(1).member("nbrugger@student.tgm.ac.at");
+										  db.group(1).delete();
+										  db.group(1).edit(new EditGroup().name("New Name"));
 										  
 										  
-										  db.group("arandomID").tasks().add(new InitialTask()/*set values*/);
-        ArrayList<Task>         grptsks = db.group("arandomID").tasks().list();
+										  db.group(1).tasks().add(new InitialTask()/*set values*/);
+        ArrayList<Task>         grptsks = db.group(1).tasks().list();
 		
-		boolean  gte = db.group("arandomID").task("Task 1").exists();
-		Task       t = db.group("arandomID").task("Task 1").information();
-		               db.group("arandomID").task("Task 1").delete();
-		               db.group("arandomID").task("Task 1").edit(new EditTask().importance(10));
+		boolean  gte = db.group(1).task("Task 1").exists();
+		Task       t = db.group(1).task("Task 1").information();
+		               db.group(1).task("Task 1").delete();
+		               db.group(1).task("Task 1").edit(new EditTask().importance(10));
 		               
 		ArrayList<ReducedGroup>   grps = db.groups().created();
 	                              db.groups().create(new InitialGroup()/*setValue*/);
