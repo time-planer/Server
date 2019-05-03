@@ -69,10 +69,8 @@ public  class MyGroups {
 		ResponseEntity<?> context = authentificate(request, username);
 		if (context != null)
 			return context;
-
 		if (!v.checkUID(groupUUID) || !v.checkEditGroup(editGroup))
 			return sendError(400, MessageEnum.PARAMS_NOT_MATCHING_PATTERN);
-
 		if (!v.checkUID(groupUUID))
 			return sendError(400, MessageEnum.PARAMS_NOT_MATCHING_PATTERN);
 		if (!db.group(groupUUID).exists())
