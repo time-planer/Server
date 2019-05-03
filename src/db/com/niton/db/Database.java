@@ -20,7 +20,7 @@ import com.niton.db.impl.UserDatabase;
 
 public class Database {
 	private static Database instance = null;
-	private static final boolean local = System.getProperty("user.home").toUpperCase().startsWith("C:");
+	private static final boolean local = false;//System.getProperty("user.home").toUpperCase().startsWith("C:");
 
 	public static Database getInstance() {
 		if (instance == null)
@@ -60,13 +60,13 @@ public class Database {
 		String password;
 		String user;
 		if (!local) {
-			user = "nils";
-			password = "ofEGfy79Xr0bl3ZuWT5S9NAG";
+			user = "proj_eds";
+			password = "EbohLii7";
 		} else {
 			user = "eds_server";
 			password = "admin";
 		}
-		String url = "jdbc:mysql://localhost:3306/eds?serverTimezone=CET";
+		String url = "jdbc:mysql://projekte.tgm.ac.at:3306/proj_eds?serverTimezone=CET";
 		String driver = "com.mysql.jdbc.Driver";
 		try {
 			Class.forName(driver).newInstance();
