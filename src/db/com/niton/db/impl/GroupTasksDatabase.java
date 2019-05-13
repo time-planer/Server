@@ -53,7 +53,7 @@ public class GroupTasksDatabase {
 	public ArrayList<Task> list() {
 		// TODO Auto-generated method stub
 		ArrayList<TaskRecord> groupTaskList = new ArrayList<>();
-		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid)).fetch();
+		org.jooq.Result<TaskRecord> gt = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(uid).and(TASK.USERS_EMAIL.eq(user))).fetch();
 		groupTaskList.addAll(gt);
 		ArrayList<Task> taskList = new ArrayList<>();
 		for(TaskRecord tR : groupTaskList) {

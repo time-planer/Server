@@ -86,7 +86,7 @@ public class GroupDatabase {
 						contained = true;
 				}
 				if(!contained) {
-					sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.USER.eq(user).and(GROUPMEMBER.GROUP.eq(uid))).execute();
+					sql.deleteFrom(GROUPMEMBER).where(GROUPMEMBER.USER.eq(o.getEmail()).and(GROUPMEMBER.GROUP.eq(uid))).execute();
 				}
 			}
 			
@@ -96,16 +96,26 @@ public class GroupDatabase {
 					if(n.getEmail().equals(o.getEmail()))
 						contained = true;
 				}
-				if(!contained) {
-					GroupmemberRecord member = GROUPMEMBER.newRecord();
+				GroupmemberRecord member ;
+				if(contained) {
+					member = sql
+							.selectFrom(GROUPMEMBER)
+							.where(
+									GROUPMEMBER.USER.eq(n.getEmail())
+									.and(
+											GROUPMEMBER.GROUP.eq(this.uid)
+									)
+							).fetchSingle();
+				}else {
+					member = GROUPMEMBER.newRecord();
 					member.attach(sql.configuration());
-					member.setUser(user);
+					member.setUser(n.getEmail());
 					member.setGroup(uid);
-					member.setCreate((byte) (n.isCreate()?1:0));
-					member.setEdit((byte) (n.isEdit()?1:0));
-					member.setDelete((byte) (n.isDelete()?1:0));
-					member.store();
 				}
+				member.setCreate((byte) (n.isCreate()?1:0));
+				member.setEdit((byte) (n.isEdit()?1:0));
+				member.setDelete((byte) (n.isDelete()?1:0));
+				member.store();
 			}
 		}
 		//TODO: Alle Atribute

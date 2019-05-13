@@ -20,7 +20,10 @@ import com.niton.db.impl.UserDatabase;
 
 public class Database {
 	private static Database instance = null;
-	private static final boolean local = false;//System.getProperty("user.home").toUpperCase().startsWith("C:");
+	private static final String host     = "jdbc:mysql://projekte.tgm.ac.at:3306/proj_eds?serverTimezone=CET&noAccessToProcedureBodies=true&autoReconnect=true&useUnicode=yes";
+	private static final String db_user  = "proj_eds";
+	private static final String password = "EbohLii7";
+	private static final String driver   = "com.mysql.jdbc.Driver";
 
 	public static Database getInstance() {
 		if (instance == null)
@@ -40,6 +43,7 @@ public class Database {
 	private UserDatabase user;
 
 	private DSLContext sql;
+	
 	private Connection connection;
 
 	private com.niton.db.impl.GroupDatabase group;
@@ -57,17 +61,6 @@ public class Database {
 	}
 
 	public void connect() {
-		String password;
-		String user;
-		if (!local) {
-			user = "proj_eds";
-			password = "EbohLii7";
-		} else {
-			user = "eds_server";
-			password = "admin";
-		}
-		String url = "jdbc:mysql://projekte.tgm.ac.at:3306/proj_eds?serverTimezone=CET";
-		String driver = "com.mysql.jdbc.Driver";
 		try {
 			Class.forName(driver).newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e1) {
@@ -75,17 +68,17 @@ public class Database {
 			e1.printStackTrace();
 		}
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(host, db_user, password);
 			Settings s = new Settings();
 			if (OpenAPI2SpringBoot.logDB)
 				s = s.withDebugInfoOnStackTrace(true).withExecuteLogging(true);
 			sql = DSL.using(connection, SQLDialect.MYSQL, s);
 			if(group == null) {
 				Database.this.user = new UserDatabase(sql);
-				group = new GroupDatabase(sql);
-				groups = new GroupsDatabase(sql);
-				task = new TaskDatabase(sql);
-				tasks = new TasksDatabase(sql);
+				group              = new GroupDatabase(sql);
+				groups             = new GroupsDatabase(sql);
+				task               = new TaskDatabase(sql);
+				tasks              = new TasksDatabase(sql);
 			}else {
 				group.setSql(sql);
 				groups.setSQL(sql);

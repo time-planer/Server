@@ -9,6 +9,7 @@ import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.types.UByte;
 
+import com.niton.db.routines.Updatetask;
 import com.niton.db.tables.records.TaskRecord;
 import com.niton.model.EditTask;
 import com.niton.model.Task;
@@ -48,21 +49,32 @@ public class GroupTaskDatabase {
 	 * @param importance edit task
 	 */
 	public void edit(EditTask importance) {
-		// TODO Auto-generated method stub
 		TaskRecord gR = sql.selectFrom(TASK).where(TASK.GROUP_UID.eq(group)).fetchOne();
+		
+		
+		Updatetask job = new  Updatetask();
+		job.attach(sql.configuration());
+		job.setGroupuid(String.valueOf(group));
+		job.setName_(task);
 		if (importance.getDeadline() != null) {
-			gR.setDeadline(Date.valueOf(importance.getDeadline()));
+			job.setNdeadline(Date.valueOf(importance.getDeadline()));
+		}else {
+			job.setNdeadline(gR.getDeadline());
 		}
 		if (importance.getDescription() != null) {
-			gR.setDescription(importance.getDescription());
+			job.setNdescription(importance.getDescription());
+		} else {
+			job.setNdescription(gR.getDescription());
 		}
-		if (importance.getImportance() != null) {
-			gR.setImportance(UByte.valueOf(importance.getImportance()));
-		}
+//		if (importance.getImportance() != null) {
+//			job.set(UByte.valueOf(importance.getImportance()));
+//		}
 		if (importance.getPlanedDate() != null) {
-			gR.setPlaneddate(Date.valueOf(importance.getPlanedDate()));
+			job.setNplaneddate(Date.valueOf(importance.getPlanedDate()));
+		}else {
+			job.setNplaneddate(gR.getPlaneddate());
 		}
-		gR.store();
+		job.execute();
 	}
 	/**
 	 * @return if a task exists
